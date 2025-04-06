@@ -1,8 +1,6 @@
 /* Handles API calls for workout-related functionality */
 
-import axios from 'axios';
-
-const API_URL = 'http://localhost:3000';
+import api from '../../../services/api';
 
 /**
  * Fetches user's existing workout questionnaire data
@@ -11,13 +9,7 @@ const API_URL = 'http://localhost:3000';
  */
 export const getWorkoutQuestionnaire = async (token) => {
   try {
-    
-    
-    const response = await axios.get(`${API_URL}/workout/questionnaire`, {
-      headers: { 'Authorization': `Bearer ${token}` }
-    });
-    
-    
+    const response = await api.get('/workout/questionnaire');
     return response.data;
   } catch (error) {
     console.error('❌ Error fetching workout questionnaire:', error);
@@ -28,18 +20,12 @@ export const getWorkoutQuestionnaire = async (token) => {
 /**
  * Submits workout questionnaire data
  * @param {Object} data - The workout questionnaire data
- * @param {string} token - Authentication token
+ * @param {string} token - Authentication token (no longer needed with api service)
  * @returns {Promise<Object>} - Response data
  */
 export const submitWorkoutQuestionnaire = async (data, token) => {
   try {
-    
-    
-    const response = await axios.post(`${API_URL}/workout/questionnaire`, data, {
-      headers: { 'Authorization': `Bearer ${token}` }
-    });
-    
-    
+    const response = await api.post('/workout/questionnaire', data);
     return response.data;
   } catch (error) {
     console.error('❌ Error submitting workout questionnaire:', error);
@@ -50,18 +36,12 @@ export const submitWorkoutQuestionnaire = async (data, token) => {
 /**
  * Generates a workout plan based on user data and preferences
  * @param {Object} userData - User data and preferences (can be empty as backend uses stored data)
- * @param {string} token - Authentication token
+ * @param {string} token - Authentication token (no longer needed with api service)
  * @returns {Promise<Object>} - The generated workout plan
  */
 export const generateWorkoutPlan = async (userData, token) => {
   try {
-    
-    
-    const response = await axios.post(`${API_URL}/workout/gen`, userData, {
-      headers: { 'Authorization': `Bearer ${token}` }
-    });
-    
-    
+    const response = await api.post('/workout/gen', userData);
     return response.data;
   } catch (error) {
     console.error('❌ Error generating workout plan:', error);
@@ -71,18 +51,12 @@ export const generateWorkoutPlan = async (userData, token) => {
 
 /**
  * Retrieves the user's workout plan
- * @param {string} token - Authentication token
+ * @param {string} token - Authentication token (no longer needed with api service)
  * @returns {Promise<Object>} - The user's workout plan
  */
 export const getWorkoutPlan = async (token) => {
   try {
-    
-    
-    const response = await axios.get(`${API_URL}/workout/plan`, {
-      headers: { 'Authorization': `Bearer ${token}` }
-    });
-    
-    
+    const response = await api.get('/workout/plan');
     return response.data;
   } catch (error) {
     console.error('❌ Error fetching workout plan:', error);

@@ -1,23 +1,14 @@
-import axios from 'axios';
-import { v4 as uuidv4 } from 'uuid'; // You'll need to install this package
-
-const API_URL = 'http://localhost:3000';
+import api from '../../../services/api';
 
 /**
  * Sends a chat message to the AI coach
  * @param {Object} data - Message data including userData and healthMetrics
- * @param {string} token - Authentication token
+ * @param {string} token - Authentication token (no longer needed with api service)
  * @returns {Promise<Object>} - Response from the AI coach
  */
 export const sendChatMessage = async (data, token) => {
   try {
-    
-    
-    const response = await axios.post(`${API_URL}/coach/chat`, data, {
-      headers: { 'Authorization': `Bearer ${token}` }
-    });
-    
-    
+    const response = await api.post('/coach/chat', data);
     return response.data;
   } catch (error) {
     console.error('Error communicating with AI coach:', error);
@@ -27,18 +18,12 @@ export const sendChatMessage = async (data, token) => {
 
 /**
  * Retrieves chat history for the user
- * @param {string} token - Authentication token
+ * @param {string} token - Authentication token (no longer needed with api service)
  * @returns {Promise<Object>} - Chat history data
  */
 export const getChatHistory = async (token) => {
   try {
-    
-    
-    const response = await axios.get(`${API_URL}/coach/history`, {
-      headers: { 'Authorization': `Bearer ${token}` }
-    });
-    
-    
+    const response = await api.get('/coach/history');
     return response.data;
   } catch (error) {
     console.error('Error retrieving chat history:', error);
@@ -49,7 +34,7 @@ export const getChatHistory = async (token) => {
 /**
  * Gets a context-aware AI summary
  * @param {Object} data - User data, health metrics, and context
- * @param {string} token - Authentication token for authorized requests
+ * @param {string} token - Authentication token (no longer needed with api service)
  * @returns {Promise<Object>} - AI summary data
  */
 export const getAISummary = async (data, token) => {
@@ -62,9 +47,7 @@ export const getAISummary = async (data, token) => {
     // Flag to determine if we should use the server API
     const useServerApi = true;
     
-    if (useServerApi && token) {
-      
-      
+    if (useServerApi) {
       // Before sending to API, ensure numeric values are properly formatted
       const normalizedData = {
         ...data,
@@ -77,11 +60,7 @@ export const getAISummary = async (data, token) => {
         context: data.context
       };
       
-      const response = await axios.post(`${API_URL}/coach/summary`, normalizedData, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-      
-      
+      const response = await api.post('/coach/summary', normalizedData);
       return response.data;
     } else {
       // Fallback to client-side summary generation
@@ -246,28 +225,22 @@ const handleApiError = (error, defaultMessage) => {
 /**
  * Get AI analysis of sleep data
  * @param {Object} data - Sleep data and insights
- * @param {string} token - User auth token
+ * @param {string} token - User auth token (no longer needed with api service)
  * @returns {Promise<Object>} - Analysis results
  */
 export const analyzeSleepData = async (data, token) => {
   try {
-    const response = await fetch(`${API_URL}/coach/analyze-sleep`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      },
-      body: JSON.stringify(data)
-    });
-    
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || 'Failed to analyze sleep data');
-    }
-    
-    return await response.json();
+    const response = await api.post('/coach/analyze-sleep', data);
+    return response.data;
   } catch (error) {
     console.error('Error analyzing sleep data:', error);
     throw error;
   }
+};
+
+export default {
+  sendChatMessage,
+  getChatHistory,
+  getAISummary,
+  analyzeSleepData
 };

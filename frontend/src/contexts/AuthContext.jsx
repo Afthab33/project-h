@@ -9,9 +9,7 @@ import {
   signInWithEmailAndPassword
 } from 'firebase/auth';
 import { auth, googleProvider, facebookProvider, firebaseApp } from '../config/firebase';
-import axios from 'axios';
-
-const API_URL = 'http://localhost:3000';
+import api from '@/services/api'; // Import the API service
 const AuthContext = createContext();
 
 export function useAuth() {
@@ -47,7 +45,7 @@ export function AuthProvider({ children }) {
       const uid = result.user.uid;
       
       // Register with backend
-      const backendResponse = await axios.post(`${API_URL}/auth/signup`, {
+      const backendResponse = await api.post('/auth/signup', {
         email: result.user.email,
         name: result.user.displayName,
         photoURL: result.user.photoURL,
@@ -73,7 +71,7 @@ export function AuthProvider({ children }) {
       const token = await result.user.getIdToken();
       const uid = result.user.uid;
 
-      const backendResponse = await axios.post(`${API_URL}/auth/signup`, {
+      const backendResponse = await api.post('/auth/signup', {
         email: result.user.email,
         name: result.user.email.split('@')[0], // Use email prefix as name
         photoURL: null,
@@ -127,7 +125,7 @@ export function AuthProvider({ children }) {
       const uid = result.user.uid;
       
       // Register with backend
-      const backendResponse = await axios.post(`${API_URL}/auth/signup`, {
+      const backendResponse = await api.post('/auth/signup', {
         email: result.user.email,
         name: result.user.displayName,
         photoURL: result.user.photoURL,
@@ -152,7 +150,7 @@ export function AuthProvider({ children }) {
         return null;
       }
 
-      const response = await axios.get(`${API_URL}/auth/user`, {
+      const response = await api.get('/auth/user', {
         headers: { 'Authorization': `Bearer ${token}` }
       });
 
@@ -177,7 +175,7 @@ export function AuthProvider({ children }) {
         return null;
       }
       
-      const response = await axios.get(`${API_URL}/onboarding`, {
+      const response = await api.get('/onboarding', {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       
@@ -220,7 +218,7 @@ export function AuthProvider({ children }) {
         throw new Error("Authentication required");
       }
       
-      const response = await axios.post(`${API_URL}/onboarding`, data, {
+      const response = await api.post('/onboarding', data, {
         headers: { 'Authorization': `Bearer ${authToken}` }
       });
       
@@ -253,7 +251,7 @@ export function AuthProvider({ children }) {
       const token = await getToken();
       if (!token) throw new Error("Authentication required");
       
-      const response = await axios.put(`${API_URL}/onboarding`, data, {
+      const response = await api.put('/onboarding', data, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       

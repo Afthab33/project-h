@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import axios from 'axios';
+import api from '@/services/api';
 import { Button, Card, CardHeader, CardContent, CardFooter } from '@/components/ui/card';
 import { AlertCircle } from 'lucide-react';
 
 const AccountDeletion = () => {
-  const { currentUser, getToken, logout } = useAuth();
+  const { currentUser, logout } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
@@ -22,11 +22,8 @@ const AccountDeletion = () => {
       setLoading(true);
       setError('');
       
-      const token = await getToken();
-      
-      const response = await axios.post('http://localhost:3000/user/delete-account', {}, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
+      // No need to get token manually - API service handles authentication
+      const response = await api.post('/user/delete-account', {});
       
       setSuccess(true);
       
