@@ -277,7 +277,7 @@ const Dashboard = () => {
               </div> */}
 {/* <div className="bg-gradient-to-r from-[#4D55CC] to-[#3E7B27] p-1.5 rounded-lg mr-2"> */}
   <img
-    src="https://img.icons8.com/?size=100&id=19625&format=png&color=000000"
+    src="https://img.icons8.com/?size=100&id=48312&format=png&color=000000"
     alt="Health Icon"
     className="h-5 w-5"
   />
