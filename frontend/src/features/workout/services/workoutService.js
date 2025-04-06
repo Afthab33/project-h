@@ -4,10 +4,9 @@ import api from '../../../services/api';
 
 /**
  * Fetches user's existing workout questionnaire data
- * @param {string} token - Authentication token
  * @returns {Promise<Object>} - Response data
  */
-export const getWorkoutQuestionnaire = async (token) => {
+export const getWorkoutQuestionnaire = async () => {
   try {
     const response = await api.get('/workout/questionnaire');
     return response.data;
@@ -20,10 +19,9 @@ export const getWorkoutQuestionnaire = async (token) => {
 /**
  * Submits workout questionnaire data
  * @param {Object} data - The workout questionnaire data
- * @param {string} token - Authentication token (no longer needed with api service)
  * @returns {Promise<Object>} - Response data
  */
-export const submitWorkoutQuestionnaire = async (data, token) => {
+export const submitWorkoutQuestionnaire = async (data) => {
   try {
     const response = await api.post('/workout/questionnaire', data);
     return response.data;
@@ -35,11 +33,10 @@ export const submitWorkoutQuestionnaire = async (data, token) => {
 
 /**
  * Generates a workout plan based on user data and preferences
- * @param {Object} userData - User data and preferences (can be empty as backend uses stored data)
- * @param {string} token - Authentication token (no longer needed with api service)
+ * @param {Object} userData - User data and preferences
  * @returns {Promise<Object>} - The generated workout plan
  */
-export const generateWorkoutPlan = async (userData, token) => {
+export const generateWorkoutPlan = async (userData) => {
   try {
     const response = await api.post('/workout/gen', userData);
     return response.data;
@@ -51,10 +48,9 @@ export const generateWorkoutPlan = async (userData, token) => {
 
 /**
  * Retrieves the user's workout plan
- * @param {string} token - Authentication token (no longer needed with api service)
  * @returns {Promise<Object>} - The user's workout plan
  */
-export const getWorkoutPlan = async (token) => {
+export const getWorkoutPlan = async () => {
   try {
     const response = await api.get('/workout/plan');
     return response.data;

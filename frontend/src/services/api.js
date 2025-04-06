@@ -1,45 +1,52 @@
 import axios from 'axios';
+import { getAuth } from 'firebase/auth';
 
 // Get the API URL from environment variables
-const baseURL = import.meta.env.VITE_API_URL;
+const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+console.log('API Service initialized with baseURL:', baseURL);
 
-console.log('API Base URL:', baseURL); // For debugging
-
+// Create axios instance
 const api = axios.create({
   baseURL,
   timeout: 30000,
   headers: {
     'Content-Type': 'application/json',
-  },
+  }
 });
 
-// Add auth token to requests
+// Request interceptor for adding auth token
 api.interceptors.request.use(
   async (config) => {
     try {
-      // Get token from localStorage or auth provider
-      const token = localStorage.getItem('authToken');
+      // Get current user from Firebase
+      const auth = getAuth();
+      const user = auth.currentUser;
       
-      if (token) {
+      if (user) {
+        // Get a fresh token
+        const token = await user.getIdToken(true);
+        console.log(`Adding auth token to request: ${config.url}`);
         config.headers.Authorization = `Bearer ${token}`;
+      } else {
+        console.log(`No user logged in for request: ${config.url}`);
       }
+      
       return config;
     } catch (error) {
-      console.error('Error in API request interceptor:', error);
+      console.error('Error setting auth token:', error);
       return config;
     }
   },
   (error) => Promise.reject(error)
 );
 
-// Handle response errors
+// Response interceptor
 api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      // Handle unauthorized access
       console.error('Unauthorized access detected');
-      // Could redirect to login or clear credentials
+      // Consider redirecting to login page or refreshing token
     }
     return Promise.reject(error);
   }

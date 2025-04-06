@@ -4,10 +4,9 @@ import api from '../../../services/api';
 
 /**
  * Fetches user's existing diet questionnaire data
- * @param {string} token - Authentication token (no longer needed with api service)
  * @returns {Promise<Object>} - Response data
  */
-export const getDietQuestionnaire = async (token) => {
+export const getDietQuestionnaire = async () => {
   try {
     const response = await api.get('/diet/questionnaire');
     return response.data;
@@ -20,10 +19,9 @@ export const getDietQuestionnaire = async (token) => {
 /**
  * Submits diet questionnaire data
  * @param {Object} data - The diet questionnaire data
- * @param {string} token - Authentication token (no longer needed with api service)
  * @returns {Promise<Object>} - Response data
  */
-export const submitDietQuestionnaire = async (data, token) => {
+export const submitDietQuestionnaire = async (data) => {
   try {
     const response = await api.post('/diet/questionnaire', data);
     return response.data;
@@ -36,10 +34,9 @@ export const submitDietQuestionnaire = async (data, token) => {
 /**
  * Generates a diet plan based on user data and preferences
  * @param {Object} userData - User data and preferences
- * @param {string} token - Authentication token (no longer needed with api service)
  * @returns {Promise<Object>} - The generated diet plan
  */
-export const generateDietPlan = async (userData, token) => {
+export const generateDietPlan = async (userData) => {
   try {
     const response = await api.post('/diet/gen', userData);
     return response.data;
@@ -51,10 +48,9 @@ export const generateDietPlan = async (userData, token) => {
 
 /**
  * Retrieves the user's diet plan
- * @param {string} token - Authentication token (no longer needed with api service)
  * @returns {Promise<Object>} - The user's diet plan
  */
-export const getDietPlan = async (token) => {
+export const getDietPlan = async () => {
   try {
     const response = await api.get('/diet/plan');
     return response.data;

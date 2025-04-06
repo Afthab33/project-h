@@ -22,7 +22,7 @@ export function AuthProvider({ children }) {
   const [onboardingData, setOnboardingData] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Helper function to get token
+  // Helper function to get token (still needed for some direct interactions)
   async function getToken(forceRefresh = false) {
     if (!currentUser) {
       return null;
@@ -41,20 +41,17 @@ export function AuthProvider({ children }) {
     try {
       const provider = googleProvider;
       const result = await signInWithPopup(auth, provider);
-      const token = await result.user.getIdToken();
-      const uid = result.user.uid;
       
-      // Register with backend
+      // Register with backend - using API service
+      // The token will be added by the interceptor
       const backendResponse = await api.post('/auth/signup', {
         email: result.user.email,
         name: result.user.displayName,
         photoURL: result.user.photoURL,
-        uid: uid
-      }, {
-        headers: { 'Authorization': `Bearer ${token}` }
+        uid: result.user.uid
       });
       
-      return { token, user: result.user };
+      return { user: result.user };
     } catch (error) {
       console.error("❌ Authentication error:", error);
       console.error("❌ Error details:", error.code, error.message);
@@ -67,18 +64,14 @@ export function AuthProvider({ children }) {
     try {
       const result = await createUserWithEmailAndPassword(auth, email, password);
       
-      // Similar to Google auth, register with backend
-      const token = await result.user.getIdToken();
-      const uid = result.user.uid;
-
+      // Register with backend using API service
+      // The token will be added by the interceptor
       const backendResponse = await api.post('/auth/signup', {
         email: result.user.email,
         name: result.user.email.split('@')[0], // Use email prefix as name
         photoURL: null,
-        uid: uid,
+        uid: result.user.uid,
         provider: 'password' // Indicate this is password-based auth
-      }, {
-        headers: { 'Authorization': `Bearer ${token}` }
       });
       
       return result;
@@ -88,7 +81,7 @@ export function AuthProvider({ children }) {
     }
   };
 
-  // Sign in with email and password
+  // Sign in with email and password (unchanged)
   const signInWithEmail = async (email, password) => {
     try {
       const result = await signInWithEmailAndPassword(auth, email, password);
@@ -118,23 +111,19 @@ export function AuthProvider({ children }) {
   // Sign in with Facebook
   const signInWithFacebook = async () => {
     try {
-      // Use the pre-created facebookProvider from your firebase.js file
       const result = await signInWithPopup(auth, facebookProvider);
       
-      const token = await result.user.getIdToken();
-      const uid = result.user.uid;
-      
-      // Register with backend
+      // Register with backend using API service
+      // The token will be added by the interceptor
       const backendResponse = await api.post('/auth/signup', {
         email: result.user.email,
         name: result.user.displayName,
         photoURL: result.user.photoURL,
-        uid: uid,
+        uid: result.user.uid,
         provider: 'facebook.com' // Specify the provider for the backend
-      }, {
-        headers: { 'Authorization': `Bearer ${token}` }
       });
-      return { token, user: result.user };
+      
+      return { user: result.user };
     } catch (error) {
       console.error("❌ Error signing in with Facebook:", error);
       throw error;
@@ -143,17 +132,13 @@ export function AuthProvider({ children }) {
 
   // Fetch user data from backend
   async function fetchUserData() {
-
     try {
-      const token = await getToken();
-      if (!token || !currentUser) {
+      if (!currentUser) {
         return null;
       }
 
-      const response = await api.get('/auth/user', {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-
+      // Use API service without manually adding token
+      const response = await api.get('/auth/user');
       setUserProfile(response.data);
       return response.data;
     } catch (error) {
@@ -166,23 +151,15 @@ export function AuthProvider({ children }) {
     }
   }
 
-  // Add this version of fetchOnboardingData that accepts a token parameter:
-
-  async function fetchOnboardingData(directToken = null) {
+  // Updated fetchOnboardingData - simplified
+  async function fetchOnboardingData() {
     try {
-      const token = directToken || await getToken();
-      if (!token) {
+      if (!currentUser) {
         return null;
       }
       
-      const response = await api.get('/onboarding', {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-      
-      if (!directToken) {
-        // Only update state if this is part of normal flow
-        setOnboardingData(response.data.data);
-      }
+      const response = await api.get('/onboarding');
+      setOnboardingData(response.data.data);
       return response.data.data;
     } catch (error) {
       // Don't treat 404 as an error for new users
@@ -199,10 +176,8 @@ export function AuthProvider({ children }) {
     }
   }
 
-  // Enhance the submitOnboardingData function with better debugging
-
-  async function submitOnboardingData(data, token = null) {
-    
+  // Simplified submitOnboardingData
+  async function submitOnboardingData(data) {
     // Validate data has required fields
     if (!data || !data.dob || !data.gender || !data.height_in_cm || !data.weight_in_kg) {
       console.error("❌ AuthContext: Invalid onboarding data format:", data);
@@ -211,19 +186,10 @@ export function AuthProvider({ children }) {
     }
     
     try {
-      // Use provided token OR get a new one
-      const authToken = token || await getToken(true); // Force refresh token
-      if (!authToken) {
-        console.error("❌ AuthContext: Cannot submit onboarding data: No authentication token");
-        throw new Error("Authentication required");
-      }
+      // API service handles the token
+      const response = await api.post('/onboarding', data);
       
-      const response = await api.post('/onboarding', data, {
-        headers: { 'Authorization': `Bearer ${authToken}` }
-      });
-      
-      
-      // Important: Update the state with the response data
+      // Update the state with the response data
       if (response?.data?.data) {
         setOnboardingData(response.data.data);
       } else {
@@ -245,16 +211,10 @@ export function AuthProvider({ children }) {
     }
   }
 
-  // Update onboarding data
+  // Update onboarding data - simplified
   async function updateOnboardingData(data) {
     try {
-      const token = await getToken();
-      if (!token) throw new Error("Authentication required");
-      
-      const response = await api.put('/onboarding', data, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-      
+      const response = await api.put('/onboarding', data);
       setOnboardingData(response.data);
       return response.data;
     } catch (error) {
@@ -263,7 +223,7 @@ export function AuthProvider({ children }) {
     }
   }
 
-  // Check if user has onboarding data
+  // Check if user has onboarding data (unchanged)
   async function hasCompletedOnboarding() {
     try {
       // This will return null if no onboarding data exists
@@ -275,7 +235,7 @@ export function AuthProvider({ children }) {
     }
   }
 
-  // Sign out
+  // Sign out (unchanged)
   function logout() {
     setUserProfile(null);
     setOnboardingData(null);
@@ -285,6 +245,7 @@ export function AuthProvider({ children }) {
   // Listen for auth state changes
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      console.log("Auth state changed:", user ? `User ${user.uid}` : "No user");
       setCurrentUser(user);
       
       if (user) {
@@ -307,10 +268,9 @@ export function AuthProvider({ children }) {
     return unsubscribe;
   }, []);
 
-  // Add this function within AuthProvider
+  // Check auth and data status - simplified
   async function checkAuthAndDataStatus() {
     try {
-      // First check if we have an authenticated user
       if (!currentUser) {
         return { 
           authenticated: false,
@@ -319,13 +279,11 @@ export function AuthProvider({ children }) {
         };
       }
       
-      // Check if we need to fetch the profile
       let profile = userProfile;
       if (!profile) {
         profile = await fetchUserData();
       }
       
-      // Check if we need to fetch onboarding data
       let onboarding = onboardingData;
       if (!onboarding) {
         onboarding = await fetchOnboardingData();
@@ -347,7 +305,7 @@ export function AuthProvider({ children }) {
     }
   }
 
-  // Don't forget to add it to the context value
+  // Context value - keeping getToken for backward compatibility
   const value = {
     currentUser,
     userProfile,
@@ -357,13 +315,13 @@ export function AuthProvider({ children }) {
     signInWithEmail,
     signInWithFacebook,
     logout,
-    getToken,
+    getToken,  // Keep for backward compatibility
     fetchUserData,
     fetchOnboardingData,
     submitOnboardingData,
     updateOnboardingData,
     hasCompletedOnboarding,
-    checkAuthAndDataStatus  // Add this to the context
+    checkAuthAndDataStatus
   };
 
   return (

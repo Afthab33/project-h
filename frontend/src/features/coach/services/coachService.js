@@ -3,10 +3,9 @@ import api from '../../../services/api';
 /**
  * Sends a chat message to the AI coach
  * @param {Object} data - Message data including userData and healthMetrics
- * @param {string} token - Authentication token (no longer needed with api service)
  * @returns {Promise<Object>} - Response from the AI coach
  */
-export const sendChatMessage = async (data, token) => {
+export const sendChatMessage = async (data) => {
   try {
     const response = await api.post('/coach/chat', data);
     return response.data;
@@ -18,10 +17,9 @@ export const sendChatMessage = async (data, token) => {
 
 /**
  * Retrieves chat history for the user
- * @param {string} token - Authentication token (no longer needed with api service)
  * @returns {Promise<Object>} - Chat history data
  */
-export const getChatHistory = async (token) => {
+export const getChatHistory = async () => {
   try {
     const response = await api.get('/coach/history');
     return response.data;
@@ -34,10 +32,9 @@ export const getChatHistory = async (token) => {
 /**
  * Gets a context-aware AI summary
  * @param {Object} data - User data, health metrics, and context
- * @param {string} token - Authentication token (no longer needed with api service)
  * @returns {Promise<Object>} - AI summary data
  */
-export const getAISummary = async (data, token) => {
+export const getAISummary = async (data) => {
   try {
     // Skip for sleep context since we have a dedicated component
     if (data.context === 'sleep') {
@@ -225,10 +222,9 @@ const handleApiError = (error, defaultMessage) => {
 /**
  * Get AI analysis of sleep data
  * @param {Object} data - Sleep data and insights
- * @param {string} token - User auth token (no longer needed with api service)
  * @returns {Promise<Object>} - Analysis results
  */
-export const analyzeSleepData = async (data, token) => {
+export const analyzeSleepData = async (data) => {
   try {
     const response = await api.post('/coach/analyze-sleep', data);
     return response.data;
