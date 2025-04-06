@@ -1,0 +1,63 @@
+// ------------------------------------------------
+// GET Routes (Retrieving Data)
+// ------------------------------------------------
+
+
+// Retrieve the user's basic details including height, weight, fitness goals, etc.
+GET / api / users / details
+
+
+
+// Questionnaires
+
+
+// Retrieve a specific fitness questionnaire by ID
+GET / api / questionnaires / fitness /: questionnaireId
+
+
+// Retrieve a specific diet questionnaire by ID
+GET / api / questionnaires / diet /: questionnaireId
+
+// Plans
+
+// Retrieve all workout plans created for the user
+GET / api / plans / workout
+
+
+
+// Retrieve all diet plans created for the user
+GET / api / plans / diet
+
+
+
+
+// ------------------------------------------------
+// POST Routes (Creating New Resources)
+// ------------------------------------------------
+
+// User Management
+
+POST / api / auth
+
+
+POST / api / questionnaires / fitness
+
+// Submit a new diet questionnaire for diet plan generation
+POST / api / questionnaires / diet
+
+// Plans
+// Generate a new workout plan based on the user's profile and questionnaire responses
+POST / api / plans / workout / generate
+
+// Generate a new diet plan based on the user's profile and questionnaire responses
+POST / api / plans / diet / generate
+
+    // ------------------------------------------------
+    // PUT Routes (Updating Existing Resources)
+    // ------------------------------------------------
+
+    /
+    // Update or create the user's basic details like height, weight, and fitness goals
+    PUT / api / users / details
+
+
