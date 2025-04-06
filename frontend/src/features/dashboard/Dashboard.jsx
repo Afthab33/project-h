@@ -272,9 +272,17 @@ const Dashboard = () => {
         <div className="max-w-7xl mx-auto px-4 md:px-6">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
-              <div className="bg-gradient-to-r from-[#4D55CC] to-[#3E7B27] p-1.5 rounded-lg mr-2">
+{/*               <div className="bg-gradient-to-r from-[#4D55CC] to-[#3E7B27] p-1.5 rounded-lg mr-2">
                 <LayoutGrid className="h-5 w-5 text-white" />
-              </div>
+              </div> */}
+<div className="bg-gradient-to-r from-[#4D55CC] to-[#3E7B27] p-1.5 rounded-lg mr-2">
+  <img
+    src="https://img.icons8.com/?size=100&id=19625&format=png&color=000000"
+    alt="Health Icon"
+    className="h-5 w-5"
+  />
+</div>
+
               <h1 className="text-xl font-bold bg-gradient-to-r from-[#4D55CC] to-[#3E7B27] bg-clip-text text-transparent">
                 Project Health
               </h1>
