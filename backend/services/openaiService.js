@@ -129,44 +129,57 @@ export const generatePlan = async (
 /**
  * Generates a plan directly using OpenAI based on a provided prompt
  * @param {string} prompt - The prompt to send to OpenAI
+ * @param {number} retries - Number of retry attempts
  * @returns {Object|string} Parsed plan object or raw content if JSON parsing fails
  */
-export const generatePlanDirect = async (prompt) => {
-    try {
-        // Call OpenAI API
-        const response = await openai.chat.completions.create({
-            model: "gpt-4o",
-            messages: [
-                {
-                    role: "system",
-                    content: "You must return raw JSON ONLY, with no explanations, backticks, or markdown. Never use ```json or ``` in your response."
-                },
-                {
-                    role: "user",
-                    content: prompt
-                }
-            ],
-            temperature: 0.6,
-            max_tokens: 3000
-        });
-
-        let planContent = response.choices[0].message.content.trim();
-
-
-        // Remove any markdown code block indicators if present
-        planContent = planContent.replace(/^```json\n|^```\n|```$/g, '');
-
+export const generatePlanDirect = async (prompt, retries = 5) => {
+    let lastError;
+    
+    for (let attempt = 0; attempt <= retries; attempt++) {
         try {
-            const plan = JSON.parse(planContent);
-            return plan;
-        } catch (jsonError) {
-            console.error(`JSON parsing error:`, jsonError);
-            return planContent; // Return raw content if JSON parsing fails
+            // Call OpenAI API
+            const response = await openai.chat.completions.create({
+                model: "gpt-4o",
+                messages: [
+                    {
+                        role: "system",
+                        content: "You must return raw JSON ONLY, with no explanations, backticks, or markdown. Never use ```json or ``` in your response."
+                    },
+                    {
+                        role: "user",
+                        content: prompt
+                    }
+                ],
+                temperature: 0.6,
+                max_tokens: 3000
+            });
+            
+            let planContent = response.choices[0].message.content.trim();
+            planContent = planContent.replace(/^```json\n|^```\n|```$/g, '');
+            
+            try {
+                const plan = JSON.parse(planContent);
+                return plan;
+            } catch (jsonError) {
+                console.error(`JSON parsing error (attempt ${attempt}):`, jsonError);
+                
+                // If we can't extract JSON and this isn't our last attempt, try again
+                if (attempt < retries) {
+                    continue;
+                }
+                throw jsonError;
+            }
+        } catch (error) {
+            lastError = error;
+            if (attempt < retries) {
+                // Wait briefly before retrying
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                continue;
+            }
         }
-    } catch (error) {
-        console.error("API error:", error);
-        throw new Error(`Error generating plan: ${error.message}`);
     }
+    
+    throw lastError || new Error("Failed to generate plan after multiple attempts");
 };
 
 export default {

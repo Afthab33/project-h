@@ -47,29 +47,22 @@ router.post("/gen", authenticateUser, async (req, res) => {
         
         const fullUserData = questionnaireDoc.data();
         
-        // Extract only the fields needed for diet plan generation
-        const dietPlanData = {
-            calories: parseInt(fullUserData.calories || 0),
-            protein: parseInt(fullUserData.protein || 0),
-            carbs: parseInt(fullUserData.carbs || 0),
-            fats: parseInt(fullUserData.fats || 0),
-            meals_per_day: parseInt(fullUserData.meals_per_day || 3),
-            diet_type: fullUserData.diet_type || "non-veg",
-            food_restrictions: fullUserData.food_restrictions || [],
-            allergies: fullUserData.allergies || [],
-            goal: fullUserData.goal || "maintenance"
-        };
-        
         // Generate the meal plan using only the needed fields
-        const prompt = generateMealPlanPrompt(dietPlanData);
+        const prompt = generateMealPlanPrompt(fullUserData);
         const rawPlan = await generatePlanDirect(prompt);
+        
+        // Validate response structure
+        if (!rawPlan || typeof rawPlan !== 'object' || !rawPlan.meal_plan) {
+            throw new Error("Invalid meal plan structure received from AI");
+        }
+        
         const formattedPlan = formatMealPlan(rawPlan);
         
         // Store the generated plan
         await db.collection("diet_plans").doc(uid).set({
             meal_plan: formattedPlan,
             created_at: FieldValue.serverTimestamp(),
-            user_preferences: fullUserData // Store reference to full preferences
+            user_preferences: fullUserData
         });
         
         res.status(200).json({

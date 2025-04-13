@@ -348,16 +348,22 @@ const Dashboard = () => {
                   onClick={() => handleTabChange('nutrition')}
                   className={`flex items-center px-4 py-2 rounded-lg text-left ${activeTab === 'nutrition' ? 'bg-[#3E7B27]/10 text-[#3E7B27]' : 'hover:bg-gray-100'}`}
                 >
-                  <UtensilsCrossed className="h-4 w-4 mr-2" />
-                  <span>Nutrition</span>
+                  <div className="relative flex items-center">
+                    <UtensilsCrossed className="h-4 w-4 mr-2" />
+                    <span>Nutrition</span>
+                    <span className="absolute -top-2 -right-2 px-1 py-0.5 text-[8px] font-semibold bg-amber-100 text-amber-700 rounded-sm leading-none">BETA</span>
+                  </div>
                 </button>
                 
                 <button
                   onClick={() => handleTabChange('fitness')}
                   className={`flex items-center px-4 py-2 rounded-lg text-left ${activeTab === 'fitness' ? 'bg-[#e72208]/10 text-[#e72208]' : 'hover:bg-gray-100'}`}
                 >
-                  <Activity className="h-4 w-4 mr-2" />
-                  <span>Fitness</span>
+                  <div className="relative flex items-center">
+                    <Activity className="h-4 w-4 mr-2" />
+                    <span>Fitness</span>
+                    <span className="absolute -top-2 -right-2 px-1 py-0.5 text-[8px] font-semibold bg-amber-100 text-amber-700 rounded-sm leading-none">BETA</span>
+                  </div>
                 </button>
                 
                 <button
@@ -423,20 +429,31 @@ const Dashboard = () => {
               >
                 <LayoutGrid className="h-4 w-4 mr-2" />
                 <span>Dashboard</span>
+                
               </TabsTrigger>
               <TabsTrigger 
                 value="nutrition" 
                 className="rounded-lg px-4 md:px-6 py-2.5 data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=active]:text-[#3E7B27] transition-all"
               >
-                <UtensilsCrossed className="h-4 w-4 mr-2" />
-                <span>Nutrition</span>
+                <div className="relative">
+                  <span className="absolute -top-2 -right-2 px-1 py-0.5 text-[8px] font-semibold bg-amber-100 text-amber-700 rounded-sm leading-none">BETA</span>
+                  <div className="flex items-center">
+                    <UtensilsCrossed className="h-4 w-4 mr-2" />
+                    <span>Nutrition</span>
+                  </div>
+                </div>
               </TabsTrigger>
               <TabsTrigger 
                 value="fitness" 
                 className="rounded-lg px-4 md:px-6 py-2.5 data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=active]:text-[#e72208] transition-all"
               >
-                <Activity className="h-4 w-4 mr-2" />
-                <span>Fitness</span>
+                <div className="relative">
+                  <span className="absolute -top-2 -right-2 px-1 py-0.5 text-[8px] font-semibold bg-amber-100 text-amber-700 rounded-sm leading-none">BETA</span>
+                  <div className="flex items-center">
+                    <Activity className="h-4 w-4 mr-2" />
+                    <span>Fitness</span>
+                  </div>
+                </div>
               </TabsTrigger>
               <TabsTrigger 
                 value="sleep" 
@@ -496,9 +513,9 @@ const Dashboard = () => {
                     healthMetrics={healthMetrics}
                   />
                 </div>
-              
-                {/* Improved AI Coach Card */}
-                <div className="overflow-hidden rounded-2xl shadow-md border-0 bg-white">
+
+                {/* Improved AI Coach Card with better height handling */}
+                <div className="overflow-hidden rounded-2xl shadow-md border-0 bg-white mb-12">
                   <div className="bg-gradient-to-r from-[#4D55CC] to-[#3E7B27] p-4 flex items-center">
                     <div className="bg-white/20 p-2 rounded-lg mr-3">
                       <Sparkles className="h-5 w-5 text-white" />
@@ -508,86 +525,15 @@ const Dashboard = () => {
                       <p className="text-xs text-white/80">Your AI Health &amp; Fitness Coach</p>
                     </div>
                   </div>
+                  <div className="h-full">
                     <AICoach 
                       ref={aiCoachRef}
                       userData={userData || {}} 
                       healthMetrics={healthMetrics}
                       contextHint={activeTab}
                       hideHeader={true}
-                      fixedHeight={true}
+                      fixedHeight={false}
                     />
-                </div>
-                
-                {/* Quick Access Section with improved cards */}
-                <div>
-                  <h3 className="text-lg font-medium text-gray-800 mb-4 flex items-center">
-                    <Calendar className="h-5 w-5 mr-2 text-[#4D55CC]" />
-                    Quick Access
-                  </h3>
-                  
-                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                    {/* Nutrition Card */}
-                    <Card className="overflow-hidden rounded-2xl hover:shadow-md transition-all duration-300 border-0 shadow bg-white group">
-                      <CardContent className="p-0">
-                        <button 
-                          className="w-full p-6 text-left relative"
-                          onClick={() => handleTabChange('nutrition')}
-                        >
-                          <div className="absolute inset-0 bg-[#3E7B27]/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                          <div className="p-2.5 rounded-xl bg-[#3E7B27]/10 mb-4 w-fit">
-                            <UtensilsCrossed className="h-5 w-5 text-[#3E7B27]" />
-                          </div>
-                          <h4 className="text-lg font-medium text-gray-800 mb-1">Meal Plan</h4>
-                          <p className="text-sm text-gray-500 mb-4">View your personalized nutrition plan</p>
-                          <div className="flex items-center text-[#3E7B27] text-sm font-medium group-hover:translate-x-0.5 transition-transform">
-                            <span>Go to nutrition</span>
-                            <ChevronRight className="h-4 w-4 ml-1" />
-                          </div>
-                        </button>
-                      </CardContent>
-                    </Card>
-                    
-                    {/* Fitness Card */}
-                    <Card className="overflow-hidden rounded-2xl hover:shadow-md transition-all duration-300 border-0 shadow bg-white group">
-                      <CardContent className="p-0">
-                        <button 
-                          className="w-full p-6 text-left relative"
-                          onClick={() => handleTabChange('fitness')}
-                        >
-                          <div className="absolute inset-0 bg-[#e72208]/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                          <div className="p-2.5 rounded-xl bg-[#e72208]/10 mb-4 w-fit">
-                            <Activity className="h-5 w-5 text-[#e72208]" />
-                          </div>
-                          <h4 className="text-lg font-medium text-gray-800 mb-1">Workouts</h4>
-                          <p className="text-sm text-gray-500 mb-4">Access your fitness training plan</p>
-                          <div className="flex items-center text-[#e72208] text-sm font-medium group-hover:translate-x-0.5 transition-transform">
-                            <span>Go to fitness</span>
-                            <ChevronRight className="h-4 w-4 ml-1" />
-                          </div>
-                        </button>
-                      </CardContent>
-                    </Card>
-                    
-                    {/* Sleep Card - Replaced Profile Card */}
-                    <Card className="overflow-hidden rounded-2xl hover:shadow-md transition-all duration-300 border-0 shadow bg-white group">
-                      <CardContent className="p-0">
-                        <button 
-                          className="w-full p-6 text-left relative"
-                          onClick={() => handleTabChange('sleep')}  
-                        >
-                          <div className="absolute inset-0 bg-[#4D55CC]/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                          <div className="p-2.5 rounded-xl bg-[#4D55CC]/10 mb-4 w-fit">
-                            <Moon className="h-5 w-5 text-[#4D55CC]" />
-                          </div>
-                          <h4 className="text-lg font-medium text-gray-800 mb-1">Sleep</h4>
-                          <p className="text-sm text-gray-500 mb-4">Monitor and improve your sleep patterns</p>
-                          <div className="flex items-center text-[#4D55CC] text-sm font-medium group-hover:translate-x-0.5 transition-transform">
-                            <span>Go to sleep</span>
-                            <ChevronRight className="h-4 w-4 ml-1" />
-                          </div>
-                        </button>
-                      </CardContent>
-                    </Card>
                   </div>
                 </div>
               </TabsContent>

@@ -336,11 +336,16 @@ const AICoach = forwardRef(({ userData, healthMetrics, contextHint, hideHeader =
       )}
       
       <CardContent className={`flex-1 flex flex-col ${hideHeader ? 'pt-4' : 'pt-3'} px-0 pb-0`}>
-        {/* Chat history section with fixed height */}
+        {/* Enhanced chat window with subtle pattern background */}
         <div 
-          className={`flex-1 overflow-y-auto px-4 space-y-4 ${
-            fixedHeight ? 'h-[400px] max-h-[400px]' : ''
+          className={`flex-1 overflow-y-auto px-5 py-3 space-y-5 bg-gradient-to-b from-gray-50/50 to-white ${
+            fixedHeight ? 'h-[400px] max-h-[400px]' : 'min-h-[550px] max-h-[65vh]'
           }`}
+          style={{
+            backgroundImage: `radial-gradient(circle at 25px 25px, rgba(0, 0, 0, 0.02) 2%, transparent 0%), 
+                               radial-gradient(circle at 75px 75px, rgba(0, 0, 0, 0.02) 2%, transparent 0%)`,
+            backgroundSize: '100px 100px'
+          }}
         >
           {messages.map((msg) => (
             <div 
@@ -348,27 +353,31 @@ const AICoach = forwardRef(({ userData, healthMetrics, contextHint, hideHeader =
               className={`group flex relative ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
             >
               <div 
-                className={`max-w-[85%] rounded-2xl p-3.5 ${
+                className={`max-w-[85%] rounded-2xl p-4 shadow-sm ${
                   msg.role === 'user' 
-                    ? 'bg-[#4D55CC] text-white rounded-tr-none' 
+                    ? 'bg-gradient-to-br from-[#4D55CC] to-[#4a52c0] text-white rounded-tr-none' 
                     : msg.error 
                       ? 'bg-red-50 text-red-600 border border-red-200 rounded-tl-none'
-                      : 'bg-gray-100 text-gray-800 rounded-tl-none'
+                      : 'bg-white border border-gray-100 text-gray-800 rounded-tl-none'
                 }`}
               >
-                <div className="flex items-center justify-between mb-1">
+                <div className="flex items-center justify-between mb-1.5">
                   <div className="flex items-center">
                     {msg.role === 'user' ? (
-                      <User className="h-3 w-3 mr-1 text-white" />
+                      <div className="bg-white/20 rounded-full p-1 mr-1.5">
+                        <User className="h-3 w-3 text-white" />
+                      </div>
                     ) : (
-                      <Bot className="h-3 w-3 mr-1 text-[#4D55CC]" />
+                      <div className="bg-[#4D55CC]/10 rounded-full p-1 mr-1.5">
+                        <Bot className="h-3 w-3 text-[#4D55CC]" />
+                      </div>
                     )}
-                    <span className={`text-xs ${msg.role === 'user' ? 'text-white/80' : 'text-gray-500'}`}>
-                      {msg.role === 'user' ? 'You' : 'Coach'} • {new Date(msg.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                    <span className={`text-xs font-medium ${msg.role === 'user' ? 'text-white/90' : 'text-gray-500'}`}>
+                      {msg.role === 'user' ? 'You' : 'Oats'} • {new Date(msg.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
                     </span>
                   </div>
                   
-                  {/* Copy button appears on hover for coach messages */}
+                  {/* Enhanced copy button appears on hover for coach messages */}
                   {msg.role === 'assistant' && (
                     <div className="opacity-0 group-hover:opacity-100 transition-opacity">
                       <TooltipProvider>
@@ -377,13 +386,13 @@ const AICoach = forwardRef(({ userData, healthMetrics, contextHint, hideHeader =
                             <Button 
                               variant="ghost" 
                               size="icon" 
-                              className="h-5 w-5 rounded-full hover:bg-gray-200"
+                              className="h-6 w-6 rounded-full hover:bg-gray-100"
                               onClick={() => copyToClipboard(msg.content, msg.id)}
                             >
                               {copiedId === msg.id ? (
                                 <span className="text-emerald-500 text-xs">Copied!</span>
                               ) : (
-                                <ClipboardCopy className="h-3 w-3 text-gray-500" />
+                                <ClipboardCopy className="h-3.5 w-3.5 text-gray-500" />
                               )}
                             </Button>
                           </TooltipTrigger>
@@ -398,15 +407,15 @@ const AICoach = forwardRef(({ userData, healthMetrics, contextHint, hideHeader =
                 
                 <p className="text-sm whitespace-pre-wrap leading-relaxed">{msg.content}</p>
                 
-                {/* Feedback buttons for coach messages */}
+                {/* Enhanced feedback buttons for coach messages */}
                 {msg.role === 'assistant' && !msg.error && (
-                  <div className="mt-2 pt-1 border-t border-gray-200 flex justify-end opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div className="mt-3 pt-2 border-t border-gray-200 flex justify-end opacity-0 group-hover:opacity-100 transition-opacity">
                     <div className="flex items-center gap-1">
-                      <Button variant="ghost" size="sm" className="h-6 w-6 p-0 rounded-full hover:bg-gray-200">
-                        <ThumbsUp className="h-3 w-3 text-gray-500" />
+                      <Button variant="ghost" size="sm" className="h-7 w-7 p-0 rounded-full hover:bg-gray-100">
+                        <ThumbsUp className="h-3.5 w-3.5 text-gray-500" />
                       </Button>
-                      <Button variant="ghost" size="sm" className="h-6 w-6 p-0 rounded-full hover:bg-gray-200">
-                        <ThumbsDown className="h-3 w-3 text-gray-500" />
+                      <Button variant="ghost" size="sm" className="h-7 w-7 p-0 rounded-full hover:bg-gray-100">
+                        <ThumbsDown className="h-3.5 w-3.5 text-gray-500" />
                       </Button>
                     </div>
                   </div>
@@ -415,17 +424,23 @@ const AICoach = forwardRef(({ userData, healthMetrics, contextHint, hideHeader =
             </div>
           ))}
           
-          {/* Loading indicator */}
+          {/* Enhanced loading indicator */}
           {isLoading && (
             <div className="flex justify-start">
-              <div className="bg-gray-100 text-gray-800 rounded-2xl rounded-tl-none p-3.5 max-w-[80%]">
-                <div className="flex items-center mb-1">
-                  <Bot className="h-3 w-3 mr-1 text-[#4D55CC]" />
-                  <span className="text-xs text-gray-500">Coach</span>
+              <div className="bg-white border border-gray-100 shadow-sm text-gray-800 rounded-2xl rounded-tl-none p-4 max-w-[80%]">
+                <div className="flex items-center mb-1.5">
+                  <div className="bg-[#4D55CC]/10 rounded-full p-1 mr-1.5">
+                    <Bot className="h-3 w-3 text-[#4D55CC]" />
+                  </div>
+                  <span className="text-xs font-medium text-gray-500">Oats</span>
                 </div>
-                <div className="flex items-center space-x-1 py-2">
-                  <Loader2 className="h-4 w-4 text-[#4D55CC] animate-spin" />
-                  <p className="text-sm text-gray-500">Generating response...</p>
+                <div className="flex items-center space-x-2 py-2">
+                  <div className="flex space-x-1">
+                    <div className="w-2 h-2 rounded-full bg-[#4D55CC] animate-bounce" style={{ animationDelay: "0ms" }}></div>
+                    <div className="w-2 h-2 rounded-full bg-[#4D55CC] animate-bounce" style={{ animationDelay: "300ms" }}></div>
+                    <div className="w-2 h-2 rounded-full bg-[#4D55CC] animate-bounce" style={{ animationDelay: "600ms" }}></div>
+                  </div>
+                  <p className="text-sm text-gray-500 ml-1">Thinking...</p>
                 </div>
               </div>
             </div>
@@ -434,8 +449,9 @@ const AICoach = forwardRef(({ userData, healthMetrics, contextHint, hideHeader =
           <div ref={messagesEndRef} />
         </div>
       </CardContent>
-      
-      <CardFooter className="border-t p-3 flex flex-col gap-2">
+
+      {/* Enhanced footer with floating input */}
+      <CardFooter className="border-t p-4 flex flex-col gap-3 bg-white">
         {error && (
           <div className="absolute -top-8 left-0 right-0 bg-red-50 border-y border-red-200 p-1.5 text-center">
             <p className="text-red-600 text-xs flex items-center justify-center">
@@ -460,47 +476,24 @@ const AICoach = forwardRef(({ userData, healthMetrics, contextHint, hideHeader =
           </div>
         )}
         
-        {/* Input form with quick questions directly above in single row */}
-        <div className="flex flex-wrap gap-1.5 mb-2">
-          <Button
-            variant="ghost"
-            size="sm"
-            className="text-xs py-1 px-2.5 h-auto border border-gray-200 bg-white text-gray-700 hover:bg-gray-50 hover:text-[#4D55CC] rounded-full"
-            onClick={() => handleSendMessage("How healthy am I?")}
-          >
-            How healthy am I?
-          </Button>
-          
-          <Button
-            variant="ghost"
-            size="sm"
-            className="text-xs py-1 px-2.5 h-auto border border-gray-200 bg-white text-gray-700 hover:bg-gray-50 hover:text-[#4D55CC] rounded-full"
-            onClick={() => handleSendMessage("What workout today?")}
-          >
-            What workout today?
-          </Button>
-          
-          <Button
-            variant="ghost"
-            size="sm"
-            className="text-xs py-1 px-2.5 h-auto border border-gray-200 bg-white text-gray-700 hover:bg-gray-50 hover:text-[#4D55CC] rounded-full"
-            onClick={() => handleSendMessage("How can I lose weight?")}
-          >
-            How can I lose weight?
-          </Button>
-          
-          <Button
-            variant="ghost"
-            size="sm"
-            className="text-xs py-1 px-2.5 h-auto border border-gray-200 bg-white text-gray-700 hover:bg-gray-50 hover:text-[#4D55CC] rounded-full"
-            onClick={() => handleSendMessage("How did I sleep?")}
-          >
-            How did I sleep?
-          </Button>
+        {/* Enhanced suggestion pills */}
+        <div className="flex flex-wrap gap-2 mb-2">
+          {suggestedPrompts.map((prompt, index) => (
+            <Button
+              key={index}
+              variant="ghost"
+              size="sm"
+              className="text-xs py-1.5 px-3 h-auto border border-gray-200 bg-white text-gray-700 hover:bg-[#4D55CC]/5 hover:text-[#4D55CC] hover:border-[#4D55CC]/30 rounded-full transition-colors"
+              onClick={() => handleSendMessage(prompt)}
+            >
+              {prompt}
+            </Button>
+          ))}
         </div>
         
+        {/* Enhanced input form with floating appearance */}
         <form 
-          className="w-full flex items-center gap-2" 
+          className="w-full flex items-center gap-2 relative" 
           onSubmit={(e) => {
             e.preventDefault();
             handleSendMessage();
@@ -510,18 +503,23 @@ const AICoach = forwardRef(({ userData, healthMetrics, contextHint, hideHeader =
             ref={inputRef}
             value={inputMessage}
             onChange={(e) => setInputMessage(e.target.value)}
-            placeholder="Ask your health coach anything..."
-            className="flex-1 border-gray-200 focus-visible:ring-[#4D55CC]/30"
+            placeholder="Ask Oats anything about your health..."
+            className="flex-1 bg-gray-50 border-gray-200 focus-visible:ring-[#4D55CC]/30 py-6 pl-4 pr-12 rounded-xl shadow-sm"
             disabled={isLoading}
           />
           <Button 
             type="submit"
             disabled={!inputMessage.trim() || isLoading}
-            className="bg-[#4D55CC] hover:bg-[#394099] text-white rounded-full w-9 h-9 p-0"
+            className="absolute right-2 bg-[#4D55CC] hover:bg-[#394099] text-white rounded-full w-10 h-10 p-0 shadow-md"
           >
             <Send className="h-4 w-4" />
           </Button>
         </form>
+        
+        {/* Add a subtle branding footer */}
+        <div className="w-full flex justify-center mt-1">
+          <p className="text-[10px] text-gray-400">Powered by Project Health AI</p>
+        </div>
       </CardFooter>
     </Card>
   );

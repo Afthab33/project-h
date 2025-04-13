@@ -93,7 +93,7 @@ const WorkoutPlanGenerator = ({ userData, healthMetrics, onWorkoutPlanGenerated 
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col items-center justify-center py-12">
-          <Loader className="h-10 w-10 text-[#e72208] animate-spin mb-6" />
+          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-[#e72208] mb-6"></div>
           <p className="text-lg text-gray-700 mb-2">Building your personalized workout regimen...</p>
           <p className="text-sm text-gray-500 max-w-md text-center">
             This may take a moment as we're designing exercises to match your fitness level, equipment access, and specific goals.

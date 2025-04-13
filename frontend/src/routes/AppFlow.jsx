@@ -3,29 +3,31 @@ Manages which screen is displayed (onboarding, login, dashboard)
 Stores and passes form data between components
 Coordinates the flow from onboarding to login to dashboard */
 
-import React, { useState, useEffect } from 'react';  // Add useEffect
+import React, { useState, useEffect } from 'react';
 import LandingPage from '../pages/landing/LandingPage';
 import OnboardingForm from '../features/onboarding/OnboardingForm';
 import Dashboard from '../features/dashboard/Dashboard';
 import Login from '../features/auth/components/Login';
 import LoginPage from '../features/auth/components/LoginPage';
 import { useAuth } from '../contexts/AuthContext';
+// Import Lucide React icons for any icons you need
+import { AlertCircle } from 'lucide-react';
 
 const AppFlow = () => {
-  const { currentUser, submitOnboardingData, getToken } = useAuth();  // Add these
+  const { currentUser, submitOnboardingData, getToken } = useAuth();
   
   // Flow control states
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
   const [showDirectLogin, setShowDirectLogin] = useState(false);
   const [showDashboard, setShowDashboard] = useState(false);
-  const [showLoginPage, setShowLoginPage] = useState(false); // Add this
+  const [showLoginPage, setShowLoginPage] = useState(false);
   
   // Add loading and error states for better UX
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submissionError, setSubmissionError] = useState(null);
   
-  // Questionnaire data
+  // Form data state
   const [formData, setFormData] = useState({
     dateOfBirth: '',
     gender: '',
@@ -47,14 +49,8 @@ const AppFlow = () => {
   // Auto-submit onboarding data if we have both currentUser and pendingSubmission
   useEffect(() => {
     const submitPendingData = async () => {
-      
-      
-      
-      
       if (currentUser && pendingSubmission && Object.keys(pendingSubmission).length > 0) {
-        
         setIsSubmitting(true);
-        
         try {
           // Add delay to ensure auth process is fully completed
           await new Promise(resolve => setTimeout(resolve, 500));
@@ -67,8 +63,6 @@ const AppFlow = () => {
             setSubmissionError("Authentication error. Please try again.");
             return;
           }
-          
-          
           
           // Format data consistently for backend
           const formattedData = {
@@ -90,11 +84,8 @@ const AppFlow = () => {
             other_medical_conditions: pendingSubmission.otherCondition || ''
           };
           
-          
-          
           // Submit the data
           await submitOnboardingData(formattedData, token);
-          
           
           // Clear the pending submission since it's been processed
           setPendingSubmission(null);
@@ -119,7 +110,7 @@ const AppFlow = () => {
     setShowOnboarding(false);
     setShowLogin(false);
     setShowDashboard(false);
-    setShowLoginPage(false); // Add this
+    setShowLoginPage(false);
     // Also clear pending submission if user backs out
     setPendingSubmission(null);
   };
@@ -142,9 +133,6 @@ const AppFlow = () => {
 
   // When completing the onboarding form
   const handleOnboardingComplete = () => {
-    
-    
-    
     // Save a deep copy of the form data to prevent modification
     setPendingSubmission({...formData});
     
@@ -153,17 +141,16 @@ const AppFlow = () => {
     setShowLogin(true);
   };
 
-  // When login is successful
+  // CRITICAL FIX: Simplified login success handler
   const handleLoginSuccess = () => {
-    // Don't clear form data immediately - let the useEffect handle submission
-    
-    
-    
+    // Simply set showDashboard to true - the useEffect above will handle the rest
+    // when currentUser becomes available
     setShowLogin(false);
     setShowDirectLogin(false);
+    setShowLoginPage(false);
     setShowDashboard(true);
     
-    // Only clear form data AFTER we've saved pending submission
+    // Clear form data
     setFormData({
       dateOfBirth: '',
       gender: '',
@@ -178,8 +165,6 @@ const AppFlow = () => {
       healthConditions: [],
       otherCondition: ''
     });
-    
-    // Note: We don't clear pendingSubmission here - the useEffect does that after successful submission
   };
 
   // Redirect from login page to signup flow
@@ -194,22 +179,30 @@ const AppFlow = () => {
     setShowLoginPage(true);
   };
 
-  // Show dashboard if user is logged in
-  if (currentUser && (showDashboard || (!showOnboarding && !showLogin && !showDirectLogin))) {
+  // CRITICAL FIX: Modify the dashboard render condition
+  // Show dashboard if user is logged in WITHOUT checking other conditions
+  if (currentUser) {
     return (
       <>
-        {isSubmitting && <div className="fixed top-0 left-0 right-0 bg-blue-500 text-white p-2 text-center z-50">
-          Saving your profile data...
-        </div>}
-        {submissionError && <div className="fixed top-0 left-0 right-0 bg-red-500 text-white p-2 text-center z-50">
-          {submissionError}
-          <button 
-            className="ml-2 underline" 
-            onClick={() => setSubmissionError(null)}
-          >
-            Dismiss
-          </button>
-        </div>}
+        {isSubmitting && (
+          <div className="fixed top-0 left-0 right-0 bg-blue-500 text-white p-2 text-center z-50">
+            Saving your profile data...
+          </div>
+        )}
+        {submissionError && (
+          <div className="fixed top-0 left-0 right-0 bg-red-500 text-white p-2 text-center z-50">
+            <div className="flex items-center justify-center">
+              <AlertCircle className="h-4 w-4 mr-2" />
+              {submissionError}
+              <button 
+                className="ml-2 underline" 
+                onClick={() => setSubmissionError(null)}
+              >
+                Dismiss
+              </button>
+            </div>
+          </div>
+        )}
         <Dashboard initialFormData={pendingSubmission} />
       </>
     );

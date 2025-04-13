@@ -130,7 +130,7 @@ router.post('/chat', authenticateUser, async (req, res) => {
     
     // Call OpenAI API with system message explicitly including profile context
     const response = await openai.chat.completions.create({
-      model: "gpt-4o", // Using the full model for better personalization
+      model: "gpt-4o-mini", // Using the full model for better personalization
       messages: [
         {
           role: "system",

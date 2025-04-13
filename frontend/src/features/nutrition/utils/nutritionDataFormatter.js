@@ -12,7 +12,6 @@ export const transformDietPlanData = (apiData) => {
   // Check if we have valid data
   if (!apiData || !apiData.meal_plan) {
     console.error("Invalid diet plan data:", apiData);
-    return createDefaultDietPlan();
   }
 
   try {
@@ -42,7 +41,6 @@ export const transformDietPlanData = (apiData) => {
     // Error case - no valid data structure
     else {
       console.error("Unrecognized meal plan data structure:", apiData.meal_plan);
-      return createDefaultDietPlan();
     }
     
     // Process each day's data
@@ -116,131 +114,56 @@ export const transformDietPlanData = (apiData) => {
     return transformedData;
   } catch (error) {
     console.error("Error transforming diet plan data:", error);
-    return createDefaultDietPlan();
   }
 };
 
 /**
- * Creates a default diet plan structure when no valid data is available
- */
-const createDefaultDietPlan = () => {
-  return {
-    day1: {
-      title: 'Default Plan',
-      meals: [
-        {
-          type: 'Breakfast',
-          name: 'Default Breakfast',
-          description: 'A nutritious morning meal to kickstart your day',
-          time: '8:00 AM',
-          calories: 500,
-          protein: 25,
-          carbs: 60,
-          fat: 15,
-          items: ['Oatmeal with berries', 'Greek yogurt']
-        },
-        {
-          type: 'Lunch',
-          name: 'Default Lunch',
-          description: 'Balanced midday meal with protein and complex carbs',
-          time: '12:30 PM',
-          calories: 600,
-          protein: 30,
-          carbs: 65,
-          fat: 20,
-          items: ['Grilled chicken', 'Brown rice', 'Mixed vegetables']
-        },
-        {
-          type: 'Dinner',
-          name: 'Default Dinner',
-          description: 'Wholesome evening meal with lean protein',
-          time: '7:00 PM',
-          calories: 550,
-          protein: 35,
-          carbs: 45,
-          fat: 20,
-          items: ['Grilled fish', 'Quinoa', 'Steamed vegetables']
-        }
-      ],
-      dailyTotals: {
-        calories: 1650,
-        protein: 90,
-        carbs: 170,
-        fat: 55
-      },
-      originalFoods: {}
-    }
-  };
-};
-
-/**
- * Generates a descriptive name for a meal based on its contents
+ * Generates a dynamic, descriptive name for a meal based on its type and content
  */
 const generateMealName = (meal) => {
   const mealType = meal.type || meal.meal_type || '';
-  let foodItems = [];
   
-  // Handle different data structures
-  if (Array.isArray(meal.foods)) {
-    foodItems = meal.foods.map(food => {
-      if (typeof food === 'string') {
-        return food.split(',')[0].trim();
-      } else if (food.item) {
-        return food.item;
-      } else if (food.description) {
-        return food.description;
-      }
-      return '';
-    });
+  // Instead of hard-coded names, generate dynamic names based on meal type and content
+  const typeCapitalized = capitalizeFirstLetter(mealType);
+  
+  // Get main protein or ingredient if available
+  let mainIngredient = '';
+  if (Array.isArray(meal.foods) && meal.foods.length > 0) {
+    // Try to find the main protein or key ingredient
+    const foods = meal.foods.map(f => typeof f === 'string' ? f : f.item || f.description || '');
+    
+    // Look for key proteins first
+    const proteins = ['chicken', 'beef', 'fish', 'salmon', 'tofu', 'eggs', 'turkey'];
+    const foundProtein = proteins.find(protein => 
+      foods.some(food => food.toLowerCase().includes(protein))
+    );
+    
+    // If protein found, use it
+    if (foundProtein) {
+      mainIngredient = capitalizeFirstLetter(foundProtein);
+    } 
+    // Otherwise use the first food item
+    else if (foods[0]) {
+      // Extract just the main food name, not quantities
+      const firstFood = foods[0].split(',')[0].trim();
+      // Remove quantities like "1 cup" from the beginning
+      mainIngredient = firstFood.replace(/^[\d/]+([\s\w]+)?\s+/, '');
+      mainIngredient = capitalizeFirstLetter(mainIngredient);
+    }
   }
   
+  // Create a more generic but still descriptive name
+  if (mainIngredient) {
+    return `${mainIngredient}-Based ${typeCapitalized}`;
+  }
+  
+  // Default names by meal type
   switch (mealType.toLowerCase()) {
-    case 'breakfast':
-      if (foodItems.some(name => name.toLowerCase().includes('oatmeal'))) {
-        return 'Oatmeal Breakfast Bowl';
-      } else if (foodItems.some(name => name.toLowerCase().includes('egg'))) {
-        return 'Protein-Rich Egg Breakfast';
-      } else if (foodItems.some(name => name.toLowerCase().includes('pancake'))) {
-        return 'Pancakes with Greek Yogurt';
-      } else if (foodItems.some(name => name.toLowerCase().includes('toast'))) {
-        return 'Whole Grain Toast Breakfast';
-      }
-      return 'Nutritious Breakfast';
-      
-    case 'lunch':
-      if (foodItems.some(name => name.toLowerCase().includes('chicken'))) {
-        return 'Grilled Chicken Lunch Bowl';
-      } else if (foodItems.some(name => name.toLowerCase().includes('turkey'))) {
-        return 'Lean Turkey Protein Bowl';
-      } else if (foodItems.some(name => name.toLowerCase().includes('quinoa'))) {
-        return 'Quinoa Power Bowl';
-      } else if (foodItems.some(name => name.toLowerCase().includes('salad'))) {
-        return 'Fresh Protein Salad';
-      }
-      return 'Balanced Lunch';
-      
-    case 'dinner':
-      if (foodItems.some(name => name.toLowerCase().includes('salmon'))) {
-        return 'Omega-Rich Salmon Dinner';
-      } else if (foodItems.some(name => name.toLowerCase().includes('beef'))) {
-        return 'Steak with Sweet Potato';
-      } else if (foodItems.some(name => name.toLowerCase().includes('fish'))) {
-        return 'Grilled Fish with Vegetables';
-      }
-      return 'Balanced Dinner Plate';
-      
-    case 'snack':
-      if (foodItems.some(name => name.toLowerCase().includes('protein'))) {
-        return 'Protein Boost Snack';
-      } else if (foodItems.some(name => name.toLowerCase().includes('yogurt'))) {
-        return 'Greek Yogurt with Berries';
-      } else if (foodItems.some(name => name.toLowerCase().includes('cottage'))) {
-        return 'Protein-Rich Cottage Cheese';
-      }
-      return 'Nutritious Snack';
-      
-    default:
-      return 'Balanced Meal';
+    case 'breakfast': return 'Balanced Breakfast';
+    case 'lunch': return 'Nutrient-Rich Lunch';
+    case 'dinner': return 'Complete Dinner';
+    case 'snack': return 'Healthy Snack';
+    default: return `${typeCapitalized} Meal`;
   }
 };
 

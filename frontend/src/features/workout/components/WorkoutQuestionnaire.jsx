@@ -13,17 +13,18 @@ import { Textarea } from '@/components/ui/textarea';
 
 const WorkoutQuestionnaire = ({ userData, healthMetrics, onSubmit }) => {
   const [step, setStep] = useState(1);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     days_per_week: 3,
-    preferred_days: [],
+    preferred_days: ['Any/All days'],
     session_duration: '30-45',
-    workout_locations: ['Home'],
+    workout_locations: ['Gym'],
     equipment_access: [],
     health_conditions: '',
     movement_restrictions: '',
     goal_timeline: 'moderate',
     fitness_level: 'intermediate',
-    preferred_workouts: [],
+    preferred_workouts: ['Any/No preference'], // Set this as default
     goal: mapGoalFromPrimaryGoal(userData.primaryGoal)
   });
 
@@ -94,6 +95,7 @@ const WorkoutQuestionnaire = ({ userData, healthMetrics, onSubmit }) => {
   // Handle workout preferences submission
   const handleSubmit = async (e) => {
     if (e) e.preventDefault();
+    setIsSubmitting(true);
     
     try {
       
@@ -125,6 +127,8 @@ const WorkoutQuestionnaire = ({ userData, healthMetrics, onSubmit }) => {
       
     } catch (error) {
       console.error("❌ Error in workout questionnaire submission:", error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -198,6 +202,28 @@ const WorkoutQuestionnaire = ({ userData, healthMetrics, onSubmit }) => {
               <div className="space-y-3">
                 <Label className="text-base font-medium">Which days do you typically prefer to exercise?</Label>
                 <div className="grid grid-cols-2 gap-2">
+                  {/* Add "Any days" option at the top */}
+                  <div className="flex items-center space-x-2 rounded-md border p-3 col-span-2">
+                    <Checkbox 
+                      id="day-any" 
+                      checked={formData.preferred_days.includes('Any/All days')}
+                      onCheckedChange={checked => {
+                        if (checked) {
+                          // If "Any days" is selected, clear other selections
+                          setFormData(prev => ({
+                            ...prev,
+                            preferred_days: ['Any/All days']
+                          }));
+                        } else {
+                          // If unchecked, just remove it
+                          handleMultiSelectChange('Any/All days', 'preferred_days');
+                        }
+                      }}
+                    />
+                    <Label htmlFor="day-any" className="flex-1 cursor-pointer">I can exercise on any day</Label>
+                  </div>
+                  
+                  {/* Existing day choices */}
                   {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map(day => (
                     <div key={day} className="flex items-center space-x-2 rounded-md border p-3">
                       <Checkbox 
@@ -205,7 +231,19 @@ const WorkoutQuestionnaire = ({ userData, healthMetrics, onSubmit }) => {
                         checked={formData.preferred_days.includes(day)}
                         onCheckedChange={checked => {
                           if (checked) {
-                            handleMultiSelectChange(day, 'preferred_days');
+                            // When selecting a specific day, remove "Any days" option if present
+                            const updatedDays = [...formData.preferred_days];
+                            const anyDaysIndex = updatedDays.indexOf('Any/All days');
+                            if (anyDaysIndex > -1) {
+                              updatedDays.splice(anyDaysIndex, 1);
+                              updatedDays.push(day);
+                              setFormData(prev => ({
+                                ...prev,
+                                preferred_days: updatedDays
+                              }));
+                            } else {
+                              handleMultiSelectChange(day, 'preferred_days');
+                            }
                           } else {
                             handleMultiSelectChange(day, 'preferred_days');
                           }
@@ -258,7 +296,7 @@ const WorkoutQuestionnaire = ({ userData, healthMetrics, onSubmit }) => {
               <div className="space-y-3">
                 <Label className="text-base font-medium">Where will you primarily exercise? (Select all that apply)</Label>
                 <div className="grid grid-cols-2 gap-2">
-                  {['Home', 'Gym', 'Outdoors', 'Office/workplace', 'On the go (travel frequently)'].map(location => (
+                  {['Gym', 'Home', 'Outdoors', 'Office/workplace', 'On the go (travel frequently)'].map(location => (
                     <div key={location} className="flex items-center space-x-2 rounded-md border p-3">
                       <Checkbox 
                         id={`location-${location}`} 
@@ -409,6 +447,28 @@ const WorkoutQuestionnaire = ({ userData, healthMetrics, onSubmit }) => {
               <div className="space-y-3">
                 <Label className="text-base font-medium">What types of workouts do you enjoy? (Select all that apply)</Label>
                 <div className="grid grid-cols-2 gap-2">
+                  {/* Place "Any" option at the top */}
+                  <div className="flex items-center space-x-2 rounded-md border p-3 col-span-2">
+                    <Checkbox 
+                      id="workout-any" 
+                      checked={formData.preferred_workouts.includes('Any/No preference')}
+                      onCheckedChange={checked => {
+                        if (checked) {
+                          // If "Any" is selected, clear other selections
+                          setFormData(prev => ({
+                            ...prev,
+                            preferred_workouts: ['Any/No preference']
+                          }));
+                        } else {
+                          // If unchecked, just remove it
+                          handleMultiSelectChange('Any/No preference', 'preferred_workouts');
+                        }
+                      }}
+                    />
+                    <Label htmlFor="workout-any" className="flex-1 cursor-pointer">I'm open to any type of workout</Label>
+                  </div>
+                  
+                  {/* Then show the specific workout types */}
                   {[
                     'Strength training', 
                     'Cardio', 
@@ -428,7 +488,19 @@ const WorkoutQuestionnaire = ({ userData, healthMetrics, onSubmit }) => {
                         checked={formData.preferred_workouts.includes(workout)}
                         onCheckedChange={checked => {
                           if (checked) {
-                            handleMultiSelectChange(workout, 'preferred_workouts');
+                            // When selecting a specific type, remove "Any" option if present
+                            const updatedWorkouts = [...formData.preferred_workouts];
+                            const anyIndex = updatedWorkouts.indexOf('Any/No preference');
+                            if (anyIndex > -1) {
+                              updatedWorkouts.splice(anyIndex, 1);
+                              updatedWorkouts.push(workout);
+                              setFormData(prev => ({
+                                ...prev,
+                                preferred_workouts: updatedWorkouts
+                              }));
+                            } else {
+                              handleMultiSelectChange(workout, 'preferred_workouts');
+                            }
                           } else {
                             handleMultiSelectChange(workout, 'preferred_workouts');
                           }
@@ -437,20 +509,6 @@ const WorkoutQuestionnaire = ({ userData, healthMetrics, onSubmit }) => {
                       <Label htmlFor={`workout-${workout}`} className="flex-1 cursor-pointer">{workout}</Label>
                     </div>
                   ))}
-                  <div className="flex items-center space-x-2 rounded-md border p-3 col-span-2">
-                    <Checkbox 
-                      id="workout-any" 
-                      checked={formData.preferred_workouts.includes('Any/No preference')}
-                      onCheckedChange={checked => {
-                        if (checked) {
-                          handleMultiSelectChange('Any/No preference', 'preferred_workouts');
-                        } else {
-                          handleMultiSelectChange('Any/No preference', 'preferred_workouts');
-                        }
-                      }}
-                    />
-                    <Label htmlFor="workout-any" className="flex-1 cursor-pointer">I'm open to any type of workout</Label>
-                  </div>
                 </div>
               </div>
             </div>
@@ -478,8 +536,9 @@ const WorkoutQuestionnaire = ({ userData, healthMetrics, onSubmit }) => {
             type="button" 
             className="bg-[#e72208] hover:bg-[#c61d07]" 
             onClick={handleSubmit}
+            disabled={isSubmitting}
           >
-            Generate Workout Plan
+            {isSubmitting ? "Generating..." : "Generate Workout Plan"}
             <Activity className="h-4 w-4 ml-2" />
           </Button>
         )}

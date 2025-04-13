@@ -11,7 +11,7 @@ import { Button } from '@/components/ui/button';
 import { 
   Dumbbell, Activity, Heart, Timer, ListChecks, ArrowRight, 
   RefreshCw, HelpCircle, Clock, Flame, BarChart3, AlertCircle,
-  Loader // Add this for loading animation
+  Loader, LightbulbIcon
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { 
@@ -32,18 +32,12 @@ const WorkoutCard = ({ userData = {}, healthMetrics = {} }) => {
   const [workoutPlan, setWorkoutPlan] = useState(null);
   const [workoutPreferences, setWorkoutPreferences] = useState(null);
   const [activeDay, setActiveDay] = useState('day1');
-  const [expandedExercise, setExpandedExercise] = useState(null);
   
   // UI state
   const [showQuestionnaire, setShowQuestionnaire] = useState(false);
   const [isLoadingPreferences, setIsLoadingPreferences] = useState(true);
   const [isGeneratingPlan, setIsGeneratingPlan] = useState(false);
   const [submissionError, setSubmissionError] = useState(null);
-  
-  // Helper function to toggle exercise details
-  const toggleExerciseDetails = (index) => {
-    setExpandedExercise(expandedExercise === index ? null : index);
-  };
   
   // Helper functions for UI display
   const getMainMuscleGroups = (dayPlan) => {
@@ -173,8 +167,6 @@ const WorkoutCard = ({ userData = {}, healthMetrics = {} }) => {
       setSubmissionError(null);
       setIsGeneratingPlan(true);
       
-      
-      
       // Get auth token
       const token = await getToken();
       
@@ -195,14 +187,11 @@ const WorkoutCard = ({ userData = {}, healthMetrics = {} }) => {
       // 1. Submit workout questionnaire
       const questionnaireResponse = await submitWorkoutQuestionnaire(completeData, token);
       
-      
       // 2. Generate workout plan - backend will use stored questionnaire
       const workoutPlanResponse = await generateWorkoutPlan({}, token);
       
-      
       // 3. Get the generated plan
       const planResponse = await getWorkoutPlan(token);
-      
       
       // Format the data using the utility function
       if (planResponse && planResponse.workout_plan) {
@@ -377,33 +366,16 @@ const WorkoutCard = ({ userData = {}, healthMetrics = {} }) => {
   
   // Show questionnaire if needed
   if (showQuestionnaire) {
+    // Show questionnaire if not generating
     return (
-      <div className="space-y-6">
-        <WorkoutQuestionnaire 
-          userData={userData}
-          healthMetrics={healthMetrics}
-          onSubmit={handleWorkoutPreferencesSubmit}
-        />
-        
-        {isGeneratingPlan && (
-          <div className="max-w-2xl mx-auto bg-gray-50 p-6 rounded-lg border">
-            <div className="flex flex-col items-center justify-center space-y-4">
-              <Loader className="h-10 w-10 text-gray-500 animate-spin" /> {/* Replace LoadingSpinner */}
-              <p className="text-center font-medium">Creating your personalized workout plan...</p>
-              <p className="text-sm text-gray-500 text-center">
-                This may take a minute. We're designing a workout plan tailored to your goals, 
-                preferences, and fitness level.
-              </p>
-            </div>
-          </div>
-        )}
-        
-        {submissionError && (
-          <Alert variant="destructive" className="max-w-2xl mx-auto">
-            <AlertDescription>{submissionError}</AlertDescription>
-          </Alert>
-        )}
-      </div>
+      <WorkoutQuestionnaire 
+        userData={userData}
+        healthMetrics={healthMetrics}
+        onSubmit={(data) => {
+          setIsGeneratingPlan(true);
+          handleWorkoutPreferencesSubmit(data);
+        }}
+      />
     );
   }
   
@@ -458,6 +430,24 @@ const WorkoutCard = ({ userData = {}, healthMetrics = {} }) => {
       
       {/* Workout Overview Card */}
       <Card className="overflow-hidden">
+        <div className="mb-6 p-3 bg-amber-50 rounded-md border border-amber-200">
+          <div className="flex">
+            <div className="shrink-0 mr-3">
+              <div className="h-8 w-8 rounded-full bg-amber-100 flex items-center justify-center">
+                <LightbulbIcon className="h-4 w-4 text-amber-600" />
+              </div>
+            </div>
+            <div>
+              <div className="flex items-center mb-1">
+                <h4 className="font-medium text-amber-800">Beta Feature</h4>
+                <span className="ml-2 px-1.5 py-0.5 text-[10px] font-semibold bg-amber-100 text-amber-700 rounded-sm">PREVIEW</span>
+              </div>
+              <p className="text-sm text-amber-700">
+                We're continuously improving our workout recommendations. This feature is in early access, and the exercise plans may need refinement to perfectly match your fitness level and goals.
+              </p>
+            </div>
+          </div>
+        </div>
         <div className="h-2 bg-[#e72208] w-full"></div>
         <CardHeader className="pb-2">
           <div className="flex justify-between items-start">
@@ -484,8 +474,8 @@ const WorkoutCard = ({ userData = {}, healthMetrics = {} }) => {
                       <div 
                         className={`text-center p-2 rounded-md cursor-pointer transition-colors ${
                           activeDay === day.id 
-                            ? 'bg-[#e72208] bg-opacity-10 border border-[#e72208] text-[#e72208]' 
-                            : 'bg-gray-100 hover:bg-gray-200'
+                            ? 'bg-white border-2 border-[#e72208] text-[#e72208] font-medium' 
+                            : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
                         }`}
                         onClick={() => setActiveDay(day.id)}
                       >
@@ -642,8 +632,8 @@ const WorkoutCard = ({ userData = {}, healthMetrics = {} }) => {
                     key={index}
                     exercise={exercise}
                     index={index}
-                    isExpanded={expandedExercise === index}
-                    onToggle={() => toggleExerciseDetails(index)}
+                    isExpanded={true} // Always show as expanded
+                    onToggle={() => {}} // Empty function since we don't need toggle
                   />
                 ))
               ) : (

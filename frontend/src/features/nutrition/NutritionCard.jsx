@@ -109,23 +109,8 @@ const NutritionCard = ({ userData = {}, healthMetrics = {} }) => {
         throw new Error('Authentication required');
       }
       
-      
-      
-      const completeData = {
-        ...preferencesData,  // All the questionnaire data
-        // Add required fields with proper names
-        calories: healthMetrics.calorieTarget,
-        protein: healthMetrics.macros?.protein || 0,
-        carbs: healthMetrics.macros?.carbs || 0,
-        fats: healthMetrics.macros?.fat || 0,
-        diet_type: preferencesData.dietType,
-        meals_per_day: preferencesData.mealsPerDay,
-        food_restrictions: preferencesData.foodRestrictions,
-        allergies: preferencesData.allergies
-      };
-      
       // 1. Submit diet questionnaire
-      const questionnaireResponse = await submitDietQuestionnaire(completeData, token);
+      const questionnaireResponse = await submitDietQuestionnaire(preferencesData, token);
       
       
       // 2. Generate diet plan - no need to send all the data again, backend will use stored questionnaire
@@ -143,7 +128,7 @@ const NutritionCard = ({ userData = {}, healthMetrics = {} }) => {
       }
       
       // Update preferences state and hide questionnaire
-      setDietPreferences(completeData);
+      setDietPreferences(preferencesData);
       setShowQuestionnaire(false);
     } catch (error) {
       console.error('Error in diet workflow:', error);
@@ -292,7 +277,27 @@ const NutritionCard = ({ userData = {}, healthMetrics = {} }) => {
     <div className="space-y-8">
       {/* Nutrition Summary Card */}
       <Card className="overflow-hidden">
+
+      <div className="mb-6 p-3 bg-amber-50 rounded-md border border-amber-200">
+          <div className="flex">
+            <div className="shrink-0 mr-3">
+              <div className="h-8 w-8 rounded-full bg-amber-100 flex items-center justify-center">
+                <LightbulbIcon className="h-4 w-4 text-amber-600" />
+              </div>
+            </div>
+            <div>
+              <div className="flex items-center mb-1">
+                <h4 className="font-medium text-amber-800">Beta Feature</h4>
+                <span className="ml-2 px-1.5 py-0.5 text-[10px] font-semibold bg-amber-100 text-amber-700 rounded-sm">PREVIEW</span>
+              </div>
+              <p className="text-sm text-amber-700">
+                Our nutrition recommendations are currently in beta. The meal plans are designed to approximate your targets but may require adjustments to perfectly suit your preferences and dietary needs.
+              </p>
+            </div>
+          </div>
+        </div>
         <div className="h-2 bg-[#3E7B27] w-full"></div>
+
         <CardHeader className="pb-2">
           <CardTitle className="text-lg font-bold flex items-center">
             <Apple className="h-5 w-5 mr-2 text-[#3E7B27]" />
@@ -506,7 +511,7 @@ const NutritionCard = ({ userData = {}, healthMetrics = {} }) => {
                           <tr className="bg-gray-100">
                             <td className="p-2 text-left font-medium">% of Daily</td>
                             <td className="p-2 text-right">{Math.round((meal.calories / dailyTotals.calories) * 100)}%</td>
-                            <td className="p-2 text-right">{Math.round((meal.protein / dailyTotals.protein) * 100)}%</td>
+                            <td className="p-2 text-right">{dailyTotals.protein ? Math.round((meal.protein / dailyTotals.protein) * 100) : 0}%</td>
                             <td className="p-2 text-right">{Math.round((meal.carbs / dailyTotals.carbs) * 100)}%</td>
                             <td className="p-2 text-right">{Math.round((meal.fat / (dailyTotals.fat || dailyTotals.fats)) * 100)}%</td>
                           </tr>

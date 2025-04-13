@@ -20,12 +20,12 @@ const DietQuestionnaire = ({ userData, healthMetrics, onSubmit }) => {
     snacks: true,
     mealPrepPreference: 'flexible',
     guidanceType: 'flexible',
-    cuisinePreferences: [],
     otherAllergies: '',
     otherRestrictions: '',
     otherDiet: '',
     goal: mapGoalFromPrimaryGoal(userData.primaryGoal)
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Map from primaryGoal to diet goal format
   function mapGoalFromPrimaryGoal(primaryGoal) {
@@ -84,7 +84,14 @@ const DietQuestionnaire = ({ userData, healthMetrics, onSubmit }) => {
   const handleSubmit = async (e) => {
     if (e) e.preventDefault();
     
+    setIsSubmitting(true);
     try {
+      // Add validation
+      if (!formData.dietType) {
+        // Show error - could use toast or form validation
+        console.error("Please select a diet type");
+        return;
+      }
       
       // Process any "other" fields
       const processedData = { ...formData };
@@ -129,19 +136,18 @@ const DietQuestionnaire = ({ userData, healthMetrics, onSubmit }) => {
         meals_per_day: processedData.mealsPerDay,
         food_restrictions: processedData.foodRestrictions,
         allergies: processedData.allergies,
-        // Include all other data for future use
         snacks: processedData.snacks,
-        mealPrepPreference: processedData.mealPrepPreference,
-        guidanceType: processedData.guidanceType,
-        cuisinePreferences: processedData.cuisinePreferences
+        meal_prep_preference: processedData.mealPrepPreference,
+        guidance_type: processedData.guidanceType
       };
       
-      
-    
+      console.log("Submitting diet input data:", dietInputData);
       await onSubmit(dietInputData);
       
     } catch (error) {
       console.error("❌ Error in diet questionnaire submission:", error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -258,11 +264,7 @@ const DietQuestionnaire = ({ userData, healthMetrics, onSubmit }) => {
                         id={`allergy-${allergy}`} 
                         checked={formData.allergies.includes(allergy.toLowerCase())}
                         onCheckedChange={checked => {
-                          if (checked) {
-                            handleMultiSelectChange(allergy.toLowerCase(), 'allergies');
-                          } else {
-                            handleMultiSelectChange(allergy.toLowerCase(), 'allergies');
-                          }
+                          handleMultiSelectChange(allergy.toLowerCase(), 'allergies');
                         }}
                       />
                       <Label htmlFor={`allergy-${allergy}`} className="flex-1 cursor-pointer">{allergy}</Label>
@@ -297,11 +299,7 @@ const DietQuestionnaire = ({ userData, healthMetrics, onSubmit }) => {
                         id={`restriction-${restriction}`} 
                         checked={formData.foodRestrictions.includes(restriction)}
                         onCheckedChange={checked => {
-                          if (checked) {
-                            handleMultiSelectChange(restriction, 'foodRestrictions');
-                          } else {
-                            handleMultiSelectChange(restriction, 'foodRestrictions');
-                          }
+                          handleMultiSelectChange(restriction, 'foodRestrictions');
                         }}
                       />
                       <Label htmlFor={`restriction-${restriction}`} className="flex-1 cursor-pointer">{restriction}</Label>
@@ -413,45 +411,6 @@ const DietQuestionnaire = ({ userData, healthMetrics, onSubmit }) => {
                   </div>
                 </RadioGroup>
               </div>
-              
-              <div className="space-y-3">
-                <Label className="text-base font-medium">Cuisine preferences (Select all that apply)</Label>
-                <div className="grid grid-cols-2 gap-2">
-                  {[
-                    'American', 'Mediterranean', 'Asian', 'Mexican', 
-                    'Indian', 'Middle Eastern', 'European'
-                  ].map(cuisine => (
-                    <div key={cuisine} className="flex items-center space-x-2 rounded-md border p-3">
-                      <Checkbox 
-                        id={`cuisine-${cuisine}`} 
-                        checked={formData.cuisinePreferences.includes(cuisine)}
-                        onCheckedChange={checked => {
-                          if (checked) {
-                            handleMultiSelectChange(cuisine, 'cuisinePreferences');
-                          } else {
-                            handleMultiSelectChange(cuisine, 'cuisinePreferences');
-                          }
-                        }}
-                      />
-                      <Label htmlFor={`cuisine-${cuisine}`} className="flex-1 cursor-pointer">{cuisine}</Label>
-                    </div>
-                  ))}
-                  <div className="flex items-center space-x-2 rounded-md border p-3 col-span-2">
-                    <Checkbox 
-                      id="cuisine-all" 
-                      checked={formData.cuisinePreferences.includes('All')}
-                      onCheckedChange={checked => {
-                        if (checked) {
-                          handleMultiSelectChange('All', 'cuisinePreferences');
-                        } else {
-                          handleMultiSelectChange('All', 'cuisinePreferences');
-                        }
-                      }}
-                    />
-                    <Label htmlFor="cuisine-all" className="flex-1 cursor-pointer">No preference/All cuisines</Label>
-                  </div>
-                </div>
-              </div>
             </div>
           )}
         </form>
@@ -464,7 +423,7 @@ const DietQuestionnaire = ({ userData, healthMetrics, onSubmit }) => {
             Back
           </Button>
         ) : (
-          <div></div> // Empty div to maintain flex spacing
+          <div></div>
         )}
         
         {step < 3 ? (
@@ -477,8 +436,9 @@ const DietQuestionnaire = ({ userData, healthMetrics, onSubmit }) => {
             type="button" 
             className="bg-[#3E7B27] hover:bg-[#2d5b1d]" 
             onClick={handleSubmit}
+            disabled={isSubmitting}
           >
-            Generate Nutrition Plan
+            {isSubmitting ? "Generating..." : "Generate Nutrition Plan"}
             <Apple className="h-4 w-4 ml-2" />
           </Button>
         )}

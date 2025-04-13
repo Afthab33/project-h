@@ -9,92 +9,49 @@ import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { AlertCircle } from 'lucide-react';
 
 const LoginPage = ({ onLoginSuccess, onRedirectToSignup, onBackToLanding }) => {
-  const { signInWithGoogle, signInWithFacebook, signInWithEmail, fetchOnboardingData } = useAuth();
+  const { signInWithGoogle, signInWithFacebook, signInWithEmail } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  // Unified handler for authentication
+  // CRITICAL FIX: Simplified authentication handler
   const handleAuthentication = async (authMethod, authParams = []) => {
     try {
       setLoading(true);
       setError('');
 
-      // Call the relevant auth method with appropriate params
+      // Call the auth method with appropriate params
       const result = await authMethod(...authParams);
       
-      if (result.user) {
-        
-        
-        // Get a fresh token for checking onboarding data
-        const token = await result.user.getIdToken(true);
-        
-        try {
-          // Check if this user has completed onboarding
-          
-          const onboardingData = await fetchOnboardingData(token);
-          
-          if (!onboardingData) {
-            
-            setError("Your account exists but you need to complete your profile first.");
-            
-            // Delay redirect to give user time to read the message
-            setTimeout(() => {
-              onRedirectToSignup();
-            }, 2000);
-            return;
-          }
-          
-          
-          // User has existing onboarding data - proceed to dashboard
-          onLoginSuccess();
-        } catch (dataError) {
-          // If error is 404, redirect to onboarding
-          if (dataError.response && dataError.response.status === 404) {
-            
-            setError("Your account exists but you need to complete your profile first.");
-            
-            setTimeout(() => {
-              onRedirectToSignup();
-            }, 2000);
-            return;
-          }
-          
-          // For other errors, log and proceed
-          console.error("❌ Error checking onboarding data:", dataError);
-          onLoginSuccess();
-        }
+      // If we have a user or success response, call onLoginSuccess
+      // Don't try to fetch onboarding data here - that's the key issue
+      if (result && (result.user || result.success)) {
+        // Simply call onLoginSuccess to trigger proper navigation
+        onLoginSuccess();
+        return;
       }
     } catch (error) {
-      console.error("❌ Authentication error:", error);
-      
-      // Format friendly error message
-      let errorMessage = error.message;
-      if (error.code === 'auth/user-not-found' || error.code === 'auth/invalid-credential') {
-        errorMessage = "No account exists with this email. Please create an account first.";
-        
-        // Highlight the create account button
-        setTimeout(() => {
-          const createAccountLink = document.getElementById('create-account-link');
-          if (createAccountLink) {
-            createAccountLink.classList.add('animate-pulse', 'font-semibold', 'text-[#3E7B27]');
-          }
-        }, 100);
-      }
-      
-      setError(errorMessage);
+      console.error("Authentication error:", error);
+      setError(error.message || "An error occurred during login");
     } finally {
       setLoading(false);
     }
   };
 
-  // Specific handlers for each auth method
-  const handleGoogleSignIn = () => handleAuthentication(signInWithGoogle);
-  const handleFacebookSignIn = () => handleAuthentication(signInWithFacebook);
+  // Email login handler
   const handleEmailSubmit = (e) => {
     e.preventDefault();
     handleAuthentication(signInWithEmail, [email, password]);
+  };
+
+  // Handlers for social logins
+  const handleGoogleLogin = () => {
+    handleAuthentication(signInWithGoogle);
+  };
+
+  const handleFacebookLogin = () => {
+    handleAuthentication(signInWithFacebook);
   };
 
   return (
@@ -207,7 +164,7 @@ const LoginPage = ({ onLoginSuccess, onRedirectToSignup, onBackToLanding }) => {
             <div className="space-y-4">
               {/* Google Button */}
               <button
-                onClick={handleGoogleSignIn}
+                onClick={handleGoogleLogin}
                 disabled={loading}
                 className="flex items-center justify-center w-full py-3 px-4 rounded-lg shadow-sm transition-all duration-300 relative overflow-hidden bg-gradient-to-r from-[#e72208]/5 via-[#3E7B27]/5 to-[#4D55CC]/5 hover:from-[#e72208]/10 hover:via-[#3E7B27]/10 hover:to-[#4D55CC]/10 border border-gray-200 hover:border-gray-300 hover:shadow-md"
               >
@@ -226,7 +183,7 @@ const LoginPage = ({ onLoginSuccess, onRedirectToSignup, onBackToLanding }) => {
               
               {/* Facebook Button */}
               <button
-                onClick={handleFacebookSignIn}
+                onClick={handleFacebookLogin}
                 disabled={loading}
                 className="flex items-center justify-center w-full py-3 px-4 rounded-lg shadow-sm transition-all duration-300 relative overflow-hidden bg-[#1877F2]/5 hover:bg-[#1877F2]/10 border border-gray-200 hover:border-gray-300 hover:shadow-md"
               >
