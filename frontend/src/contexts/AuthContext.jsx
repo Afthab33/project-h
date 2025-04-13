@@ -6,7 +6,8 @@ import {
   signOut, 
   onAuthStateChanged,
   createUserWithEmailAndPassword,
-  signInWithEmailAndPassword
+  signInWithEmailAndPassword,
+  updateProfile
 } from 'firebase/auth';
 import { auth, googleProvider, facebookProvider, firebaseApp } from '../config/firebase';
 import api from '@/services/api'; // Import the API service
@@ -60,18 +61,27 @@ export function AuthProvider({ children }) {
   }
 
   // Sign up with email and password
-  const signUpWithEmail = async (email, password) => {
+  const signUpWithEmail = async (email, password, firstName, lastName) => {
     try {
       const result = await createUserWithEmailAndPassword(auth, email, password);
       
-      // Register with backend using API service
-      // The token will be added by the interceptor
-      const backendResponse = await api.post('/auth/signup', {
+      // Construct full name, but store components separately
+      const fullName = lastName ? `${firstName} ${lastName}` : firstName;
+      
+      // Update Firebase profile
+      await updateProfile(result.user, {
+        displayName: fullName
+      });
+      
+      // Register with backend with all name components
+      await api.post('/auth/signup', {
         email: result.user.email,
-        name: result.user.email.split('@')[0], // Use email prefix as name
+        firstName: firstName,
+        lastName: lastName || '',
+        displayName: fullName,
         photoURL: null,
         uid: result.user.uid,
-        provider: 'password' // Indicate this is password-based auth
+        provider: 'password'
       });
       
       return result;

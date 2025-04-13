@@ -1,15 +1,24 @@
 import React, { useEffect } from 'react';
-import { AlertCircle } from 'lucide-react';
+import { 
+  AlertCircle, 
+  Check, 
+  Armchair, 
+  PersonStanding, 
+  Bike, 
+  Dumbbell,
+  Activity, // Replacing Running with Activity
+  Lightbulb // Correct name for LightbulbIcon
+} from 'lucide-react';
 
 const ActivityLevelStep = ({ formData, handleInputChange, errors, setErrors }) => {
-  // Activity levels remain unchanged
+  // Activity levels with Lucide icons
   const activityLevels = [
     {
       id: 'sedentary',
       level: '1',
       title: 'Sedentary',
       description: 'Little to no exercise, mostly sitting all day',
-      icon: '🪑',
+      icon: <Armchair className="h-4 w-4 sm:h-5 sm:w-5" />,
       color: '#e72208'
     },
     {
@@ -17,7 +26,7 @@ const ActivityLevelStep = ({ formData, handleInputChange, errors, setErrors }) =
       level: '2',
       title: 'Lightly Active',
       description: 'Light exercise 1-3 days per week',
-      icon: '🚶',
+      icon: <PersonStanding className="h-4 w-4 sm:h-5 sm:w-5" />,
       color: '#e86e4d'
     },
     {
@@ -25,7 +34,7 @@ const ActivityLevelStep = ({ formData, handleInputChange, errors, setErrors }) =
       level: '3',
       title: 'Moderately Active',
       description: 'Moderate exercise 3-5 days per week',
-      icon: '🚴',
+      icon: <Bike className="h-4 w-4 sm:h-5 sm:w-5" />,
       color: '#3E7B27'
     },
     {
@@ -33,7 +42,7 @@ const ActivityLevelStep = ({ formData, handleInputChange, errors, setErrors }) =
       level: '4',
       title: 'Active',
       description: 'Intense exercise 6-7 days per week or physically active job',
-      icon: '🏃',
+      icon: <Activity className="h-4 w-4 sm:h-5 sm:w-5" />, // Changed from Running to Activity
       color: '#2f669a'
     },
     {
@@ -41,7 +50,7 @@ const ActivityLevelStep = ({ formData, handleInputChange, errors, setErrors }) =
       level: '5',
       title: 'Very Active',
       description: 'Highly strenuous exercise and physically demanding jobs',
-      icon: '🏋️',
+      icon: <Dumbbell className="h-4 w-4 sm:h-5 sm:w-5" />,
       color: '#4D55CC'
     }
   ];
@@ -64,14 +73,14 @@ const ActivityLevelStep = ({ formData, handleInputChange, errors, setErrors }) =
   // Function to render activity level dots instead of bars
   const renderLevelIndicator = (level, color) => {
     return (
-      <div className="flex items-center gap-0.5 mt-0 ml-[10px]">
+      <div className="flex items-center gap-0.5 mt-0 ml-2 sm:ml-3">
         {[...Array(5)].map((_, i) => (
           <div 
             key={i} 
-            className={`
-              h-[5px] w-[5px] rounded-full
-              ${i < parseInt(level) ? `bg-[${color}]` : 'bg-gray-200'}
-            `}
+            className={`h-1 sm:h-1.5 w-1 sm:w-1.5 rounded-full`}
+            style={{ 
+              backgroundColor: i < parseInt(level) ? color : '#e5e7eb' 
+            }}
           ></div>
         ))}
       </div>
@@ -79,12 +88,10 @@ const ActivityLevelStep = ({ formData, handleInputChange, errors, setErrors }) =
   };
 
   return (
-    <div>
-      {/* Removed text description to save more space */}
-      
+    <div className="space-y-4 sm:space-y-5">
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">Daily Activity Level</label>
-        <div className="space-y-2">
+        <label className="block text-sm sm:text-base font-medium text-gray-700 mb-2 sm:mb-3">Daily Activity Level</label>
+        <div className="space-y-2 sm:space-y-3">
           {activityLevels.map((activity) => {
             const isSelected = formData.activityLevel === activity.id;
             
@@ -92,12 +99,12 @@ const ActivityLevelStep = ({ formData, handleInputChange, errors, setErrors }) =
               <label 
                 key={activity.id}
                 className={`
-                  block p-2 border rounded-lg cursor-pointer transition-all
-                  ${isSelected 
-                    ? `border-[${activity.color}] bg-[${activity.color}]/5 shadow-sm` 
-                    : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
-                  }
+                  block p-2.5 sm:p-3 border rounded-lg cursor-pointer transition-all hover:shadow-sm
                 `}
+                style={{
+                  borderColor: isSelected ? activity.color : '#e5e7eb',
+                  backgroundColor: isSelected ? `${activity.color}10` : 'white'
+                }}
               >
                 <input 
                   type="radio" 
@@ -110,45 +117,58 @@ const ActivityLevelStep = ({ formData, handleInputChange, errors, setErrors }) =
                 />
                 
                 <div className="flex items-center">
-                  <div className={`
-                    flex-shrink-0 w-7 h-7 flex items-center justify-center rounded-full mr-2.5
-                    ${isSelected ? `bg-[${activity.color}]/10` : 'bg-gray-100'}
-                  `}>
-                    <span className="text-sm">{activity.icon}</span>
+                  <div 
+                    className={`
+                      flex-shrink-0 w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center rounded-full mr-3 sm:mr-4
+                    `}
+                    style={{
+                      backgroundColor: isSelected ? `${activity.color}15` : '#f3f4f6',
+                      color: isSelected ? activity.color : '#6b7280'
+                    }}
+                  >
+                    {activity.icon}
                   </div>
                   
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center">
-                      <span className={`
-                        inline-flex items-center justify-center w-4 h-4 rounded-full 
-                        text-white text-xs font-medium mr-1
-                        ${isSelected ? `bg-[${activity.color}]` : 'bg-gray-300'}
-                      `}>
+                      <span 
+                        className={`
+                          inline-flex items-center justify-center w-5 h-5 sm:w-6 sm:h-6 rounded-full 
+                          text-white text-xs font-medium mr-2
+                        `}
+                        style={{
+                          backgroundColor: isSelected ? activity.color : '#d1d5db'
+                        }}
+                      >
                         {activity.level}
                       </span>
-                      <span className={`
-                        font-medium text-sm
-                        ${isSelected ? `text-[${activity.color}]` : 'text-gray-800'}
-                      `}>
+                      <span 
+                        className={`
+                          font-medium text-sm sm:text-base
+                        `}
+                        style={{
+                          color: isSelected ? activity.color : '#1f2937'
+                        }}
+                      >
                         {activity.title}
                       </span>
                       
-                      {/* Simple dot indicators - shown for all options */}
+                      {/* Activity level indicator dots */}
                       {renderLevelIndicator(activity.level, activity.color)}
                     </div>
-                    <p className="text-xs text-gray-500 mt-0.5 line-clamp-1">{activity.description}</p>
+                    <p className="text-xs sm:text-sm text-gray-500 mt-1 sm:mt-1.5 ml-7 sm:ml-8">{activity.description}</p>
                   </div>
                   
+                  {/* Checkmark for selected option */}
                   {isSelected && (
-                    <div className="ml-auto">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill={activity.color}>
-                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                      </svg>
+                    <div className="ml-auto flex-shrink-0">
+                      <Check 
+                        className="h-4 w-4 sm:h-5 sm:w-5" 
+                        style={{ color: activity.color }} 
+                      />
                     </div>
                   )}
                 </div>
-                
-                {/* Removed the animated bar indicator */}
               </label>
             );
           })}
@@ -156,17 +176,11 @@ const ActivityLevelStep = ({ formData, handleInputChange, errors, setErrors }) =
         
         {/* Error message */}
         {errors?.activityLevel && (
-          <div className="text-sm text-red-500 mt-1.5 flex items-center">
-            <AlertCircle className="h-3.5 w-3.5 mr-1" />
-            {errors.activityLevel}
+          <div className="text-xs sm:text-sm text-red-500 mt-1.5 sm:mt-2 flex items-center animate-fadeIn">
+            <AlertCircle className="h-3.5 w-3.5 mr-1.5 flex-shrink-0" />
+            <span>{errors.activityLevel}</span>
           </div>
         )}
-        
-        {/* Even more compact tip */}
-        <div className="mt-2 flex items-start gap-1.5 text-xs text-gray-500">
-          <span>💡</span>
-          <p>Your activity level determines your calorie needs for optimal results.</p>
-        </div>
       </div>
     </div>
   );

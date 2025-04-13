@@ -338,13 +338,16 @@ const AICoach = forwardRef(({ userData, healthMetrics, contextHint, hideHeader =
       <CardContent className={`flex-1 flex flex-col ${hideHeader ? 'pt-4' : 'pt-3'} px-0 pb-0`}>
         {/* Enhanced chat window with subtle pattern background */}
         <div 
-          className={`flex-1 overflow-y-auto px-5 py-3 space-y-5 bg-gradient-to-b from-gray-50/50 to-white ${
+          className={`flex-1 overflow-y-auto px-5 py-3 space-y-5 bg-gradient-to-b from-[#f5f7ff] to-white ${
             fixedHeight ? 'h-[400px] max-h-[400px]' : 'min-h-[550px] max-h-[65vh]'
           }`}
           style={{
-            backgroundImage: `radial-gradient(circle at 25px 25px, rgba(0, 0, 0, 0.02) 2%, transparent 0%), 
-                               radial-gradient(circle at 75px 75px, rgba(0, 0, 0, 0.02) 2%, transparent 0%)`,
-            backgroundSize: '100px 100px'
+            backgroundImage: `
+              radial-gradient(circle at 25px 25px, rgba(77, 85, 204, 0.05) 2%, transparent 0%), 
+              radial-gradient(circle at 75px 75px, rgba(62, 123, 39, 0.05) 2%, transparent 0%),
+              linear-gradient(to right, rgba(77, 85, 204, 0.02), rgba(62, 123, 39, 0.02))
+            `,
+            backgroundSize: '100px 100px, 100px 100px, 100% 100%'
           }}
         >
           {messages.map((msg) => (

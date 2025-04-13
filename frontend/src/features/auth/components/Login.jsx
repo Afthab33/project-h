@@ -1,14 +1,12 @@
 import React, { useState } from 'react';
 import { Card, CardHeader, CardContent, CardFooter } from '@/components/ui/card';
-import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
-import { AlertCircle, ChevronLeft } from 'lucide-react';
-import { FcGoogle } from 'react-icons/fc';
-import { BsFacebook } from 'react-icons/bs';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { AlertCircle, ChevronLeft, LogIn } from 'lucide-react';
 import EmailSignUpForm from './EmailSignUpForm';
 import { useAuth } from '../../../contexts/AuthContext';
 
 const Login = ({ onLoginSuccess, formData, onBackToLanding, onSwitchToLogin }) => {
-  const { signInWithGoogle, signInWithFacebook, submitOnboardingData } = useAuth();
+  const { signInWithGoogle, signInWithFacebook } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   
@@ -17,15 +15,7 @@ const Login = ({ onLoginSuccess, formData, onBackToLanding, onSwitchToLogin }) =
     try {
       setLoading(true);
       setError('');
-      
-      
-      
-      // Call the authentication method (Google or Facebook)
       const result = await signInMethod();
-      
-      
-      
-      // Proceed to dashboard - let AppFlow handle pendingSubmission
       onLoginSuccess();
     } catch (err) {
       console.error(`❌ ${providerName} authentication error:`, err);
@@ -40,111 +30,103 @@ const Login = ({ onLoginSuccess, formData, onBackToLanding, onSwitchToLogin }) =
   const handleFacebookSignIn = () => handleThirdPartySignIn(signInWithFacebook, "Facebook");
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white flex flex-col items-center justify-center px-4 py-12 relative">
-      {/* Background circles */}
-      <div className="absolute top-20 -right-12 w-64 h-64 bg-[#e72208]/10 rounded-full opacity-60"></div>
-      <div className="absolute bottom-10 -left-20 w-80 h-80 bg-[#3E7B27]/10 rounded-full opacity-60"></div>
-      <div className="absolute -bottom-20 left-1/4 w-56 h-56 bg-[#4D55CC]/10 rounded-full opacity-60"></div>
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white flex items-center justify-center px-4 py-6 relative">
+      <div className="absolute top-10 sm:top-20 -right-20 sm:-right-12 w-40 sm:w-64 h-40 sm:h-64 bg-[#e72208]/10 rounded-full opacity-60"></div>
+      <div className="absolute bottom-5 sm:bottom-10 -left-32 sm:-left-20 w-60 sm:w-80 h-60 sm:h-80 bg-[#3E7B27]/10 rounded-full opacity-60"></div>
+      <div className="absolute -bottom-32 sm:-bottom-20 left-1/4 w-40 sm:w-56 h-40 sm:h-56 bg-[#4D55CC]/10 rounded-full opacity-60"></div>
       
       <div className="w-full max-w-md z-10">
-        {/* Back button */}
+        {/* Back button - compact */}
         {onBackToLanding && (
           <button
             onClick={onBackToLanding}
-            className="flex items-center text-gray-600 hover:text-gray-900 mb-4 transition-colors"
+            className="flex items-center text-gray-600 hover:text-gray-900 mb-3 p-1 rounded-md"
           >
             <ChevronLeft className="h-4 w-4 mr-1" />
-            <span>Back to home</span>
+            <span className="text-sm">Back</span>
           </button>
         )}
         
-        <Card className="shadow-xl border-gray-100">
-          <CardHeader className="text-center pb-3">
-            <h2 className="text-2xl font-bold text-gray-800">Create Your Account</h2>
-            <p className="text-gray-500">Complete your registration to access your personalized dashboard</p>
+        <Card className="shadow-lg border-gray-100">
+          <CardHeader className="text-center pb-0 pt-4">
+            <h2 className="text-xl font-bold text-gray-800">Create Account</h2>
+            <p className="text-gray-500 text-xs sm:text-sm mt-0.5">Join to access your personalized dashboard</p>
           </CardHeader>
           
-          <CardContent className="pb-4">
-            {error && (
-              <Alert variant="destructive" className="mb-6">
+          {error && (
+            <div className="px-4 pt-3">
+              <Alert variant="destructive" className="py-2">
                 <AlertCircle className="h-4 w-4" />
-                <AlertTitle>Error</AlertTitle>
-                <AlertDescription>{error}</AlertDescription>
+                <AlertDescription className="text-xs ml-2">{error}</AlertDescription>
               </Alert>
-            )}
+            </div>
+          )}
+          
+          <CardContent className="p-4 space-y-3.5">
+            {/* Social login options with labels beside icons */}
+            <div className="flex flex-col gap-2.5">
+              {/* Google Button - inspired by LoginPage.jsx */}
+              <button
+                onClick={handleGoogleSignIn}
+                disabled={loading}
+                className="py-2 px-3 rounded-md border border-gray-200 bg-white hover:bg-gray-50 transition-colors flex items-center justify-center shadow-sm hover:shadow-md"
+              >
+                <div className="flex items-center justify-center">
+                  <svg className="w-4 h-4 mr-2.5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M23.7662 12.2765C23.7662 11.4608 23.6999 10.6406 23.5577 9.83765H12.2439V14.4591H18.722C18.453 15.9495 17.5888 17.2679 16.3233 18.1056V21.104H20.1902C22.4614 19.014 23.7662 15.9274 23.7662 12.2765Z" fill="#4285F4"/>
+                    <path d="M12.2439 24.0008C15.4361 24.0008 18.0859 22.9382 20.1945 21.1039L16.3276 18.1055C15.2517 18.8375 13.8627 19.252 12.2482 19.252C9.1416 19.252 6.49396 17.1399 5.52175 14.3003H1.54175V17.3912C3.63693 21.4434 7.73168 24.0008 12.2439 24.0008Z" fill="#34A853"/>
+                    <path d="M5.51764 14.3002C5.06276 12.8099 5.06276 11.196 5.51764 9.70569V6.61475H1.54175C-0.128428 10.0055 -0.128428 14.0004 1.54175 17.3912L5.51764 14.3002Z" fill="#FBBC05"/>
+                    <path d="M12.2439 4.74966C13.9499 4.7232 15.5976 5.36697 16.8209 6.54867L20.2584 3.12128C18.1 1.0855 15.2206 -0.034466 12.2439 0.000808666C7.73168 0.000808666 3.63693 2.55822 1.54175 6.61481L5.51764 9.70575C6.48557 6.86173 9.13748 4.74966 12.2439 4.74966Z" fill="#EA4335"/>
+                  </svg>
+                  <span className="text-sm font-medium text-gray-800">Continue with Google</span>
+                </div>
+              </button>
+              
+              {/* Facebook Button - inspired by LoginPage.jsx */}
+              <button
+                onClick={handleFacebookSignIn}
+                disabled={loading}
+                className="py-2 px-3 rounded-md border border-gray-200 bg-white hover:bg-gray-50 transition-colors flex items-center justify-center shadow-sm hover:shadow-md"
+              >
+                <div className="flex items-center justify-center">
+                  <svg className="w-4 h-4 text-[#1877F2] mr-2.5" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                  </svg>
+                  <span className="text-sm font-medium text-gray-800">Continue with Facebook</span>
+                </div>
+              </button>
+            </div>
             
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-gray-200"></div>
+              </div>
+              <div className="relative flex justify-center text-xs">
+                <span className="px-2 bg-white text-gray-500">or sign up with email</span>
+              </div>
+            </div>
+            
+            {/* Email form - more compact */}
             <EmailSignUpForm 
               onSignUpSuccess={onLoginSuccess}
               loading={loading}
               setLoading={setLoading}
               setError={setError}
               formData={formData}
+              compact={true} // Add a compact prop to make the form smaller
             />
-            
-            <div className="relative my-6">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-200"></div>
-              </div>
-              <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-white text-gray-500">Or continue with</span>
-              </div>
-            </div>
-            
-            {/* Social Login Buttons - with more modern styling from your old design */}
-            <div className="space-y-4">
-              {/* Google Button */}
-              <button
-                onClick={handleGoogleSignIn}
-                disabled={loading}
-                className="flex items-center justify-center w-full py-3 px-4 rounded-lg shadow-sm transition-all duration-300 relative overflow-hidden bg-gradient-to-r from-[#e72208]/5 via-[#3E7B27]/5 to-[#4D55CC]/5 hover:from-[#e72208]/10 hover:via-[#3E7B27]/10 hover:to-[#4D55CC]/10 border border-gray-200 hover:border-gray-300 hover:shadow-md"
-              >
-                <div className="flex items-center justify-center">
-                  {/* Google icon */}
-                  <div className="bg-white p-1 rounded-full shadow-sm mr-3">
-                    <FcGoogle className="w-5 h-5" />
-                  </div>
-                  
-                  {/* Button text */}
-                  <span className="font-medium text-gray-800">
-                    Continue with Google
-                  </span>
-                </div>
-              </button>
-              
-              {/* Facebook Button */}
-              <button
-                onClick={handleFacebookSignIn}
-                disabled={loading}
-                className="flex items-center justify-center w-full py-3 px-4 rounded-lg shadow-sm transition-all duration-300 relative overflow-hidden bg-[#1877F2]/5 hover:bg-[#1877F2]/10 border border-gray-200 hover:border-gray-300 hover:shadow-md"
-              >
-                <div className="flex items-center justify-center">
-                  {/* Facebook icon */}
-                  <div className="bg-white p-1 rounded-full shadow-sm mr-3">
-                    <BsFacebook className="w-5 h-5 text-[#1877F2]" />
-                  </div>
-                  
-                  {/* Button text */}
-                  <span className="font-medium text-gray-800">
-                    Continue with Facebook
-                  </span>
-                </div>
-              </button>
-            </div>
           </CardContent>
           
-          <CardFooter className="flex flex-col items-center pt-2 pb-6">
-            <div className="text-xs text-gray-500 text-center mb-3">
-              By signing up, you agree to our Terms and Privacy Policy
-            </div>
-            <div className="text-sm">
-              <span className="text-gray-600">Already have an account? </span>
-              <button 
-                onClick={onSwitchToLogin}
-                className="text-[#3E7B27] font-medium hover:underline"
-              >
-                Sign in here
-              </button>
-            </div>
+          <CardFooter className="flex justify-between items-center py-2.5 px-4 bg-gray-50 text-xs">
+            <span className="text-gray-500">
+              By signing up, you agree to our <a href="#" className="underline hover:text-gray-700">Terms</a>
+            </span>
+            <button 
+              onClick={onSwitchToLogin}
+              className="text-[#3E7B27] font-medium hover:underline flex items-center"
+            >
+              Sign in <LogIn className="w-3 h-3 ml-1" />
+            </button>
           </CardFooter>
         </Card>
       </div>

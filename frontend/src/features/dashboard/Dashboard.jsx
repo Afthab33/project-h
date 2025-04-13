@@ -16,7 +16,10 @@ import {
   Bell,
   BarChart2,
   Sparkles,
-  Moon
+  Moon,
+  Heart,
+  Menu,
+  X
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 
@@ -272,17 +275,6 @@ const Dashboard = () => {
         <div className="max-w-7xl mx-auto px-4 md:px-6">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
-{/*               <div className="bg-gradient-to-r from-[#4D55CC] to-[#3E7B27] p-1.5 rounded-lg mr-2">
-                <LayoutGrid className="h-5 w-5 text-white" />
-              </div> */}
-{/* <div className="bg-gradient-to-r from-[#4D55CC] to-[#3E7B27] p-1.5 rounded-lg mr-2"> */}
-  <img
-    src="https://img.icons8.com/?size=100&id=48312&format=png&color=000000"
-    alt="Health Icon"
-    className="h-5 w-5"
-  />
-{/* </div> */}
-
               <h1 className="text-xl font-bold bg-gradient-to-r from-[#4D55CC] to-[#3E7B27] bg-clip-text text-transparent">
                 Project Health
               </h1>
@@ -294,14 +286,13 @@ const Dashboard = () => {
                 <button
                   className="md:hidden p-1.5 rounded-lg bg-gray-100 hover:bg-gray-200"
                   onClick={() => setIsMobileNavOpen(!isMobileNavOpen)}
+                  aria-label={isMobileNavOpen ? "Close menu" : "Open menu"}
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    {isMobileNavOpen ? (
-                      <path d="M18 6L6 18M6 6l12 12" />
-                    ) : (
-                      <path d="M3 12h18M3 6h18M3 18h18" />
-                    )}
-                  </svg>
+                  {isMobileNavOpen ? (
+                    <X className="h-5 w-5 text-gray-700" />
+                  ) : (
+                    <Menu className="h-5 w-5 text-gray-700" />
+                  )}
                 </button>
                 
                 {/* User avatar */}
@@ -515,7 +506,7 @@ const Dashboard = () => {
                 </div>
 
                 {/* Improved AI Coach Card with better height handling */}
-                <div className="overflow-hidden rounded-2xl shadow-md border-0 bg-white mb-12">
+                <div className="overflow-hidden rounded-2xl shadow-md border-0 bg-white">
                   <div className="bg-gradient-to-r from-[#4D55CC] to-[#3E7B27] p-4 flex items-center">
                     <div className="bg-white/20 p-2 rounded-lg mr-3">
                       <Sparkles className="h-5 w-5 text-white" />
