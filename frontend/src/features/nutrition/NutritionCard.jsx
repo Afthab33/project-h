@@ -291,7 +291,7 @@ const NutritionCard = ({ userData = {}, healthMetrics = {} }) => {
                 <span className="ml-2 px-1.5 py-0.5 text-[10px] font-semibold bg-amber-100 text-amber-700 rounded-sm">PREVIEW</span>
               </div>
               <p className="text-sm text-amber-700">
-                Our nutrition recommendations are currently in beta. The meal plans are designed to approximate your targets but may require adjustments to perfectly suit your preferences and dietary needs.
+                Our nutrition recommendations are currently in beta. We're still refining the meal plans, and this is just a preview.
               </p>
             </div>
           </div>
@@ -381,7 +381,6 @@ const NutritionCard = ({ userData = {}, healthMetrics = {} }) => {
                 
                 <div className="p-4">
                   <div className="flex justify-between items-start mb-3">
-                    <h4 className="font-medium">{meal.name}</h4>
                     <Badge variant="outline" className="bg-[#3E7B27] bg-opacity-10 text-[#3E7B27] border-[#3E7B27] border-opacity-20">
                       {meal.calories} cal
                     </Badge>

@@ -26,19 +26,34 @@ if (missingVars.length > 0) {
   process.exit(1);
 }
 
+// Fix the CORS configuration
+
 // CORS configuration that supports both development and production
 const isDevelopment = process.env.NODE_ENV !== 'production';
 
 let corsOptions;
 if (isDevelopment) {
+  // In development, be more permissive with CORS
   corsOptions = {
     origin: true, // Allow all origins in development
     credentials: true
   };
 } else {
-  // In production, use these settings
+  // In production, use the strict CORS settings
+  const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') || ['https://www.projhealth.com', 'https://projhealth.com'];
+  
   corsOptions = {
-    origin: ['https://www.projhealth.com', 'https://projhealth.com'],
+    origin: function (origin, callback) {
+      // Allow requests with no origin (like mobile apps, curl, etc)
+      if (!origin) return callback(null, true);
+      
+      if (allowedOrigins.indexOf(origin) !== -1 || allowedOrigins.includes('*')) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
+    optionsSuccessStatus: 200,
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization']
@@ -78,7 +93,8 @@ app.use('*', (req, res) => {
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  
+  console.log(`Server running on port ${PORT} in ${process.env.NODE_ENV || 'development'} mode`);
+  console.log(`API health check available at http://localhost:${PORT}/`);
 });
 
 // Handle unhandled promise rejections

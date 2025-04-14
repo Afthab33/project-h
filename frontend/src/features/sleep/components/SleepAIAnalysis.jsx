@@ -194,37 +194,49 @@ const SleepAIAnalysis = ({ sleepData, sleepInsights, isAnalyzing = false }) => {
               
               <div className="text-center">
                 <div className="text-xs text-gray-500 mb-1">Deep Sleep</div>
-                <div className={`text-base font-bold
-                  ${sleepInsights.deepSleepPercentage >= 15 ? 
-                    sleepInsights.deepSleepPercentage <= 25 ? 'text-green-600' : 'text-amber-600' 
-                    : 'text-red-600'
-                  }`}>
-                  {Math.round(sleepInsights.deepSleepPercentage)}%
-                  <span className="text-xs font-normal text-gray-500 ml-1">(15-25% ideal)</span>
-                </div>
+                {sleepInsights ? (
+                  <div className={`text-base font-bold
+                    ${sleepInsights.deepSleepPercentage >= 15 ? 
+                      sleepInsights.deepSleepPercentage <= 25 ? 'text-green-600' : 'text-amber-600' 
+                      : 'text-red-600'
+                    }`}>
+                    {Math.round(sleepInsights.deepSleepPercentage)}%
+                    <span className="text-xs font-normal text-gray-500 ml-1">(15-25% ideal)</span>
+                  </div>
+                ) : (
+                  <div className="text-base font-medium text-gray-500">--</div>
+                )}
               </div>
               
               <div className="text-center">
                 <div className="text-xs text-gray-500 mb-1">REM Sleep</div>
-                <div className={`text-base font-bold
-                  ${sleepInsights.remSleepPercentage >= 20 ? 
-                    sleepInsights.remSleepPercentage <= 25 ? 'text-green-600' : 'text-amber-600' 
-                    : 'text-red-600'
-                  }`}>
-                  {Math.round(sleepInsights.remSleepPercentage)}%
-                  <span className="text-xs font-normal text-gray-500 ml-1">(20-25% ideal)</span>
-                </div>
+                {sleepInsights ? (
+                  <div className={`text-base font-bold
+                    ${sleepInsights.remSleepPercentage >= 20 ? 
+                      sleepInsights.remSleepPercentage <= 25 ? 'text-green-600' : 'text-amber-600' 
+                      : 'text-red-600'
+                    }`}>
+                    {Math.round(sleepInsights.remSleepPercentage)}%
+                    <span className="text-xs font-normal text-gray-500 ml-1">(20-25% ideal)</span>
+                  </div>
+                ) : (
+                  <div className="text-base font-medium text-gray-500">--</div>
+                )}
               </div>
               
               <div className="text-center">
                 <div className="text-xs text-gray-500 mb-1">Consistency</div>
-                <div className={`text-base font-bold
-                  ${sleepInsights.sleepConsistency >= 7 ? 'text-green-600' : 
-                    sleepInsights.sleepConsistency >= 5 ? 'text-amber-600' : 
-                    'text-red-600'
-                  }`}>
-                  {sleepInsights.sleepConsistency}/10
-                </div>
+                {sleepInsights ? (
+                  <div className={`text-base font-bold
+                    ${sleepInsights.sleepConsistency >= 7 ? 'text-green-600' : 
+                      sleepInsights.sleepConsistency >= 5 ? 'text-amber-600' : 
+                      'text-red-600'
+                    }`}>
+                    {sleepInsights.sleepConsistency}/10
+                  </div>
+                ) : (
+                  <div className="text-base font-medium text-gray-500">--</div>
+                )}
               </div>
             </div>
           </div>
@@ -235,13 +247,13 @@ const SleepAIAnalysis = ({ sleepData, sleepInsights, isAnalyzing = false }) => {
             <Clock className="h-3.5 w-3.5 text-gray-500 mr-1" />
             <span className="text-gray-500">Avg. Sleep:</span>
             <span className="font-medium ml-1 text-gray-700">
-              {formatHoursAndMinutes(sleepInsights.averageSleepDuration)}
+              {sleepInsights ? formatHoursAndMinutes(sleepInsights.averageSleepDuration) : "--"}
             </span>
           </div>
           <div className="flex items-center">
             <Calendar className="h-3.5 w-3.5 text-gray-500 mr-1" />
             <span className="text-gray-500">Data Range:</span>
-            <span className="font-medium ml-1 text-gray-700">{aiAnalysis.dayCount} days</span>
+            <span className="font-medium ml-1 text-gray-700">{aiAnalysis?.dayCount || "--"} days</span>
           </div>
           <div className="flex items-center ml-auto">
             <span className="text-gray-500">Status:</span>

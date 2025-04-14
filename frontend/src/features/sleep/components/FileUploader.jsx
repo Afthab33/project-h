@@ -1,13 +1,50 @@
 import React, { useState } from 'react';
-import { Upload, AlertCircle, Brain, ArrowRight } from 'lucide-react';
+import { Upload, AlertCircle, Brain, ArrowRight, Sparkles } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Papa from 'papaparse';
 
 const FileUploader = ({ onDataProcessed }) => {
   const [isUploading, setIsUploading] = useState(false);
+  const [isLoadingDemo, setIsLoadingDemo] = useState(false);
   const [error, setError] = useState(null);
   const [fileSelected, setFileSelected] = useState(null);
+  
+  // Add this new function to load demo data
+  const handleLoadDemoData = () => {
+    setIsLoadingDemo(true);
+    setError(null);
+    
+    // Use the URL instead of directly importing the CSV
+    Papa.parse(sampleDataUrl, {
+      download: true,
+      header: true,
+      complete: (results) => {
+        try {
+          // Debug the data to see what we're getting
+          console.log("Parsed CSV data (first row):", results.data[0]);
+          
+          // Process the CSV data using the same function as for uploaded files
+          const processedData = processHealthData(results.data);
+          
+          // Pass the processed data to the parent component
+          onDataProcessed(processedData);
+          setIsLoadingDemo(false);
+        } catch (err) {
+          console.error("Error processing demo data:", err);
+          setError("Failed to process demo data. Please try uploading your own file.");
+          setIsLoadingDemo(false);
+        }
+      },
+      error: (err) => {
+        console.error("Error parsing demo CSV:", err);
+        setError("Failed to load demo data. Please try uploading your own file.");
+        setIsLoadingDemo(false);
+      }
+    });
+  };
+
+  const sampleDataUrl = new URL('@/assets/WearableData.csv', import.meta.url).href;
   
   const handleFileSelect = (event) => {
     const file = event.target.files[0];
@@ -80,13 +117,14 @@ const FileUploader = ({ onDataProcessed }) => {
   };
 
   return (
-    <Card className="bg-white border-0 shadow-md">
+    <Card className="bg-white shadow-sm border-0">
       <CardContent className="p-6">
         {error && (
-          <div className="mb-4 p-3 bg-red-50 border-l-4 border-red-500 text-red-700 rounded">
-            <div className="flex">
-              <AlertCircle className="h-5 w-5 mr-2" />
-              <span>{error}</span>
+          <div className="mb-5 p-3 bg-red-50 rounded-lg border border-red-100 flex items-start">
+            <AlertCircle className="h-5 w-5 text-red-500 mr-2 flex-shrink-0 mt-0.5" />
+            <div>
+              <h4 className="text-sm font-medium text-red-800">Error</h4>
+              <p className="text-xs text-red-700">{error}</p>
             </div>
           </div>
         )}
@@ -102,53 +140,77 @@ const FileUploader = ({ onDataProcessed }) => {
           </p>
         </div>
         
-        <div className="flex flex-col items-center justify-center py-8 border-2 border-dashed border-gray-200 rounded-lg bg-gray-50">
-          <Upload className="h-12 w-12 text-gray-400 mb-4" />
-          <h3 className="text-lg font-medium mb-2">Upload Apple Health Data</h3>
-          <p className="text-sm text-gray-500 mb-4 text-center max-w-md">
-            Export your health data from the Apple Health app and upload the CSV file to get personalized sleep insights
-          </p>
-          
-          <input 
-            type="file" 
-            accept=".csv" 
-            onChange={handleFileSelect}
-            className="hidden" 
-            id="file-upload" 
-          />
-          <div className="flex flex-col items-center gap-3">
-            {/* File selection button */}
-            <label htmlFor="file-upload" className="cursor-pointer">
-              <div className="bg-white border border-gray-200 hover:border-[#4D55CC]/60 text-gray-700 px-4 py-2 rounded-lg transition-all flex items-center">
-                <Upload className="h-4 w-4 mr-2 text-gray-500" />
-                Browse Files
-              </div>
-            </label>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          {/* Upload your own data */}
+          <div className="flex flex-col items-center justify-center py-8 border-2 border-dashed border-gray-200 rounded-lg bg-gray-50">
+            <Upload className="h-12 w-12 text-gray-400 mb-4" />
+            <h3 className="text-lg font-medium mb-2">Upload Your Data</h3>
+            <p className="text-sm text-gray-500 mb-4 text-center max-w-md">
+              Export your health data from the Apple Health app and upload the CSV file
+            </p>
             
-            {/* Show selected file */}
-            {fileSelected && (
-              <div className="text-sm flex items-center gap-2 mt-2">
-                <div className="p-1.5 bg-blue-50 rounded-md border border-blue-100">
-                  <span className="text-blue-600">{fileSelected.name}</span>
+            <input 
+              type="file" 
+              accept=".csv" 
+              onChange={handleFileSelect}
+              className="hidden" 
+              id="file-upload" 
+            />
+            <div className="flex flex-col items-center gap-3">
+              {/* File selection button */}
+              <label htmlFor="file-upload" className="cursor-pointer">
+                <div className="bg-white border border-gray-200 hover:border-[#4D55CC]/60 text-gray-700 px-4 py-2 rounded-lg transition-all flex items-center">
+                  <Upload className="h-4 w-4 mr-2 text-gray-500" />
+                  Browse Files
                 </div>
-                {/* Process button */}
-                <Button 
-                  onClick={handleProcessFile}
-                  disabled={isUploading}
-                  className="bg-[#4D55CC] hover:bg-[#3c43a0] ml-2"
-                >
-                  {isUploading ? 'Processing...' : (
-                    <span className="flex items-center">
-                      Analyze with AI <ArrowRight className="h-3.5 w-3.5 ml-1.5" />
-                    </span>
-                  )}
-                </Button>
-              </div>
-            )}
+              </label>
+              
+              {/* Show selected file */}
+              {fileSelected && (
+                <div className="text-sm flex items-center gap-2 mt-2">
+                  <div className="p-1.5 bg-blue-50 rounded-md border border-blue-100">
+                    <span className="text-blue-600">{fileSelected.name}</span>
+                  </div>
+                  {/* Process button */}
+                  <Button 
+                    onClick={handleProcessFile}
+                    disabled={isUploading}
+                    className="bg-[#4D55CC] hover:bg-[#3c43a0] ml-2"
+                  >
+                    {isUploading ? 'Processing...' : (
+                      <span className="flex items-center">
+                        Analyze with AI <ArrowRight className="h-3.5 w-3.5 ml-1.5" />
+                      </span>
+                    )}
+                  </Button>
+                </div>
+              )}
+            </div>
+          </div>
+          
+          {/* Try with demo data */}
+          <div className="flex flex-col items-center justify-center py-8 border-2 border-dashed border-gray-200 rounded-lg bg-gradient-to-r from-[#4D55CC]/5 to-[#3E7B27]/5">
+            <Sparkles className="h-12 w-12 text-[#3E7B27] mb-4" />
+            <h3 className="text-lg font-medium mb-2">Try Demo Data</h3>
+            <p className="text-sm text-gray-500 mb-4 text-center max-w-md">
+              Try sleep analytics with Aftab's (Project H founder) anonymized sleep data
+            </p>
+            
+            <Button 
+              onClick={handleLoadDemoData}
+              disabled={isLoadingDemo}
+              className="bg-[#3E7B27] hover:bg-[#32691f]"
+            >
+              {isLoadingDemo ? 'Loading...' : (
+                <span className="flex items-center">
+                  Explore Demo Data <ArrowRight className="h-3.5 w-3.5 ml-1.5" />
+                </span>
+              )}
+            </Button>
           </div>
         </div>
         
-        <div className="mt-4">
+        <div className="mt-5">
           <h4 className="text-sm font-medium mb-2">How to export Apple Health data:</h4>
           <ol className="text-xs text-gray-600 list-decimal pl-4 space-y-1">
             <li>Open the Health app on your iPhone</li>

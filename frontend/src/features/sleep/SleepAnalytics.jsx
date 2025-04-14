@@ -22,7 +22,7 @@ const iconMap = {
 const SleepAnalytics = ({ userData, healthMetrics, onDataProcessed }) => {
   const [sleepData, setSleepData] = useState(null);
   const [activeTab, setActiveTab] = useState('overview');
-  const [timeRange, setTimeRange] = useState('week'); // week, month, all
+  const [timeRange, setTimeRange] = useState('month'); // month, all
   const [sleepInsights, setSleepInsights] = useState(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false); // New state for tracking analysis
   
@@ -92,12 +92,6 @@ const SleepAnalytics = ({ userData, healthMetrics, onDataProcessed }) => {
         </h2>
         
         <div className="bg-gray-100 p-1 rounded-lg">
-          <button 
-            className={`px-3 py-1 text-sm rounded-md ${timeRange === 'week' ? 'bg-white shadow-sm' : ''}`}
-            onClick={() => setTimeRange('week')}
-          >
-            Week
-          </button>
           <button 
             className={`px-3 py-1 text-sm rounded-md ${timeRange === 'month' ? 'bg-white shadow-sm' : ''}`}
             onClick={() => setTimeRange('month')}

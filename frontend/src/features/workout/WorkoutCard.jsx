@@ -165,7 +165,6 @@ const WorkoutCard = ({ userData = {}, healthMetrics = {} }) => {
   const handleWorkoutPreferencesSubmit = async (preferencesData) => {
     try {
       setSubmissionError(null);
-      setIsGeneratingPlan(true);
       
       // Get auth token
       const token = await getToken();
@@ -366,12 +365,38 @@ const WorkoutCard = ({ userData = {}, healthMetrics = {} }) => {
   
   // Show questionnaire if needed
   if (showQuestionnaire) {
+    // Check if generating plan and show appropriate loading state
+    if (isGeneratingPlan) {
+      return (
+        <Card className="max-w-2xl mx-auto">
+          <div className="h-2 bg-[#e72208] w-full"></div>
+          <CardHeader>
+            <CardTitle className="text-xl font-bold flex items-center">
+              <Dumbbell className="h-5 w-5 mr-2 text-[#e72208]" />
+              Generating Your Workout Plan
+            </CardTitle>
+            <CardDescription>
+              Creating a personalized fitness program based on your preferences
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="flex flex-col items-center justify-center py-12">
+            <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-[#e72208] mb-6"></div>
+            <p className="text-lg text-gray-700 mb-2">Building your personalized workout regimen...</p>
+            <p className="text-sm text-gray-500 max-w-md text-center">
+              This may take a moment as we're designing exercises to match your fitness level, equipment access, and specific goals.
+            </p>
+          </CardContent>
+        </Card>
+      );
+    }
+    
     // Show questionnaire if not generating
     return (
       <WorkoutQuestionnaire 
         userData={userData}
         healthMetrics={healthMetrics}
         onSubmit={(data) => {
+          // Set generating state BEFORE submitting
           setIsGeneratingPlan(true);
           handleWorkoutPreferencesSubmit(data);
         }}
@@ -443,7 +468,7 @@ const WorkoutCard = ({ userData = {}, healthMetrics = {} }) => {
                 <span className="ml-2 px-1.5 py-0.5 text-[10px] font-semibold bg-amber-100 text-amber-700 rounded-sm">PREVIEW</span>
               </div>
               <p className="text-sm text-amber-700">
-                We're continuously improving our workout recommendations. This feature is in early access, and the exercise plans may need refinement to perfectly match your fitness level and goals.
+                We're still working on generating accurate and validated workout plans. This is just a preview.
               </p>
             </div>
           </div>
