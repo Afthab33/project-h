@@ -1,0 +1,16 @@
+{
+    "name": "Project Health",
+    "short_name": "ProjHealth",
+    "description": "Your personal health and fitness companion",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#4D55CC",
+    "icons": [
+      {
+        "src": "/Projecth-favicon.svg",
+        "sizes": "any",
+        "type": "image/svg+xml"
+      }
+    ]
+  }
