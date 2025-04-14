@@ -21,8 +21,6 @@ const FileUploader = ({ onDataProcessed }) => {
       header: true,
       complete: (results) => {
         try {
-          // Debug the data to see what we're getting
-          console.log("Parsed CSV data (first row):", results.data[0]);
           
           // Process the CSV data using the same function as for uploaded files
           const processedData = processHealthData(results.data);

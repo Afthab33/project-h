@@ -93,8 +93,6 @@ app.use('*', (req, res) => {
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT} in ${process.env.NODE_ENV || 'development'} mode`);
-  console.log(`API health check available at http://localhost:${PORT}/`);
 });
 
 // Handle unhandled promise rejections
