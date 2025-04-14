@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- Simple square background with rounded corners using the website's green color -->
+  <rect x="15" y="15" width="70" height="70" rx="8" fill="#55842C" />
+  
+  <!-- Minimalist H letter in white -->
+  <g>
+    <!-- Left vertical line of H -->
+    <rect x="33" y="30" width="8" height="40" fill="#ffffff" />
+    
+    <!-- Right vertical line of H -->
+    <rect x="59" y="30" width="8" height="40" fill="#ffffff" />
+    
+    <!-- Horizontal middle line of H -->
+    <rect x="33" y="46" width="34" height="8" fill="#ffffff" />
+  </g>
+</svg>

@@ -141,7 +141,7 @@ const DietQuestionnaire = ({ userData, healthMetrics, onSubmit }) => {
         guidance_type: processedData.guidanceType
       };
       
-      console.log("Submitting diet input data:", dietInputData);
+      
       await onSubmit(dietInputData);
       
     } catch (error) {

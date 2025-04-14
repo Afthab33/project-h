@@ -3,7 +3,7 @@ import { getAuth } from 'firebase/auth';
 
 // Get the API URL from environment variables
 const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
-console.log('API Service initialized with baseURL:', baseURL);
+
 
 // Create axios instance
 const api = axios.create({
@@ -25,10 +25,10 @@ api.interceptors.request.use(
       if (user) {
         // Get a fresh token
         const token = await user.getIdToken(true);
-        console.log(`Adding auth token to request: ${config.url}`);
+        
         config.headers.Authorization = `Bearer ${token}`;
       } else {
-        console.log(`No user logged in for request: ${config.url}`);
+        
       }
       
       return config;

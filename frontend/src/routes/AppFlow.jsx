@@ -46,6 +46,9 @@ const AppFlow = () => {
   // Keep a copy of form data for submission after login
   const [pendingSubmission, setPendingSubmission] = useState(null);
 
+  // Add this to your state
+  const [isNewUserFromOnboarding, setIsNewUserFromOnboarding] = useState(false);
+
   // Auto-submit onboarding data if we have both currentUser and pendingSubmission
   useEffect(() => {
     const submitPendingData = async () => {
@@ -136,6 +139,9 @@ const AppFlow = () => {
     // Save a deep copy of the form data to prevent modification
     setPendingSubmission({...formData});
     
+    // Flag this user as new (coming from onboarding)
+    setIsNewUserFromOnboarding(true);
+    
     // Continue to login
     setShowOnboarding(false);
     setShowLogin(true);
@@ -203,7 +209,7 @@ const AppFlow = () => {
             </div>
           </div>
         )}
-        <Dashboard initialFormData={pendingSubmission} />
+        <Dashboard initialFormData={pendingSubmission} isNewUser={isNewUserFromOnboarding} />
       </>
     );
   }

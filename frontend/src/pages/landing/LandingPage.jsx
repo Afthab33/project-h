@@ -122,7 +122,6 @@ const LandingPage = ({ onGetStarted, onLogin }) => {
             <div className="bg-gradient-to-r from-[#4D55CC] to-[#3E7B27] bg-clip-text text-transparent font-bold text-lg">
               Your AI Coach
             </div>
-            <span className="ml-2 py-1 px-2 bg-[#4D55CC]/10 text-[#4D55CC] text-xs font-medium rounded-md">NEW</span>
           </div>
           <p className="text-gray-600 mb-6">Oats is your personal AI health & fitness coach that provides tailored advice, customized workout routines, and nutrition guidance specific to your unique body and goals.</p>
         </div>
@@ -285,24 +284,12 @@ const LandingPage = ({ onGetStarted, onLogin }) => {
               </ul>
             </div>
             <div className="bg-white p-6 rounded-2xl shadow-xl border border-gray-200 transform md:rotate-1 hover:rotate-0 transition-transform duration-500">
-              {/* Improved dashboard preview */}
-              <div className="bg-gray-50 h-72 rounded-xl flex items-center justify-center overflow-hidden relative">
-                <div className="absolute inset-0 bg-gradient-to-br from-transparent to-gray-100/80 z-10"></div>
-                <div className="absolute bottom-0 left-0 w-full h-1/2 bg-gradient-to-t from-gray-50 to-transparent"></div>
-                <div className="grid grid-cols-2 gap-3 p-4 w-full h-full">
-                  <div className="bg-white rounded-lg shadow-sm flex items-center justify-center">
-                    <span className="text-gray-400 text-sm">Fitness Chart</span>
-                  </div>
-                  <div className="bg-white rounded-lg shadow-sm flex items-center justify-center">
-                    <span className="text-gray-400 text-sm">Nutrition Stats</span>
-                  </div>
-                  <div className="bg-white rounded-lg shadow-sm flex items-center justify-center">
-                    <span className="text-gray-400 text-sm">Sleep Analysis</span>
-                  </div>
-                  <div className="bg-white rounded-lg shadow-sm flex items-center justify-center">
-                    <span className="text-gray-400 text-sm">Health Score</span>
-                  </div>
-                </div>
+              <div className="rounded-xl overflow-hidden shadow-sm">
+                <img 
+                  src="/images/dashboard-preview.png" 
+                  alt="Project Health Dashboard Preview" 
+                  className="w-full h-auto object-cover"
+                />
                 <div className="absolute top-4 left-0 right-0 flex justify-center z-20">
                   <span className="text-gray-500 font-medium bg-white px-4 py-1 rounded-full shadow-sm text-sm">Dashboard Preview</span>
                 </div>

@@ -100,16 +100,22 @@ const HealthConditionsStep = ({ formData, handleInputChange, errors, setErrors }
     let newConditions;
     
     if (conditionId === 'No conditions') {
-      newConditions = ['No conditions'];
+      // If selecting "No conditions", clear all other conditions
+      newConditions = currentConditions.includes('No conditions') ? [] : ['No conditions'];
     } else {
+      // Remove "No conditions" if it exists
+      newConditions = currentConditions.filter(id => id !== 'No conditions');
+      
+      // Toggle the selected condition
       if (currentConditions.includes(conditionId)) {
-        newConditions = currentConditions.filter(id => id !== conditionId);
-        if (newConditions.length === 0) {
-          newConditions = ['No conditions'];
-        }
+        newConditions = newConditions.filter(id => id !== conditionId);
       } else {
-        newConditions = currentConditions.filter(id => id !== 'No conditions');
         newConditions.push(conditionId);
+      }
+      
+      // If no conditions are selected, don't auto-add "No conditions"
+      if (newConditions.length === 0) {
+        newConditions = [];
       }
     }
     
@@ -150,21 +156,16 @@ const HealthConditionsStep = ({ formData, handleInputChange, errors, setErrors }
           {healthConditions.map((condition) => {
             const isSelected = Array.isArray(formData.healthConditions) && 
                               formData.healthConditions.includes(condition.id);
-            const isNoConditions = condition.id === 'No conditions';
-            const isDisabled = !isNoConditions && 
-                              Array.isArray(formData.healthConditions) && 
-                              formData.healthConditions.includes('No conditions');
+            // Remove the isDisabled logic that was preventing selection of other conditions
             
             return (
               <button
                 key={condition.id}
                 type="button"
-                onClick={() => !isDisabled && handleConditionSelect(condition.id)}
-                disabled={isDisabled}
+                onClick={() => handleConditionSelect(condition.id)}
                 className={`
                   flex items-center p-2 border rounded-lg transition-all text-left outline-none
-                  ${isDisabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
-                  focus:outline-none focus:ring-1 focus:ring-offset-1
+                  cursor-pointer focus:outline-none focus:ring-1 focus:ring-offset-1
                 `}
                 style={{
                   borderColor: isSelected ? condition.color : '#e5e7eb',

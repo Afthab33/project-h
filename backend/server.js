@@ -32,7 +32,7 @@ const isDevelopment = process.env.NODE_ENV !== 'production';
 let corsOptions;
 if (isDevelopment) {
   // In development, be more permissive with CORS
-  console.log('Running in development mode - allowing all origins for CORS');
+  
   corsOptions = {
     origin: true, // Allow all origins in development
     credentials: true
@@ -40,7 +40,7 @@ if (isDevelopment) {
 } else {
   // In production, use the strict CORS settings
   const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') || ['https://yourdomain.com'];
-  console.log(`Running in production mode - restricting CORS to: ${allowedOrigins}`);
+  
   corsOptions = {
     origin: function (origin, callback) {
       // Allow requests with no origin (like mobile apps, curl, etc)
@@ -90,7 +90,7 @@ app.use('*', (req, res) => {
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`Server running in ${process.env.NODE_ENV || 'development'} mode on port ${PORT}`);
+  
 });
 
 // Handle unhandled promise rejections
