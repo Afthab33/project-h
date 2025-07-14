@@ -1,18 +1,12 @@
 // Enhanced workout plan prompt generator
 export const generateWorkoutPlanPrompt = (userData) => {
-  // Extracting data from request
   const daysPerWeek = parseInt(userData.days_per_week || 3);
   const preferredDays = userData.preferred_days || [];
   const sessionDuration = userData.session_duration || "30-45 minutes";
-  const workoutEnvironments = userData.workout_locations || []; // Fix: Changed from environments to locations
+  const workoutEnvironments = userData.workout_locations || [];
   const equipmentAccess = userData.equipment_access || [];
   
-  // CRITICAL FIX: Don't just create text variables, actually modify userData 
-  // to avoid any possible variable name issues in the rest of the function
-  
-  // For health conditions - ensure userData.healthConditions exists and is an array
   if (!userData.healthConditions) {
-    // Create healthConditions from health_conditions
     if (userData.health_conditions) {
       userData.healthConditions = Array.isArray(userData.health_conditions) 
         ? userData.health_conditions 
@@ -22,9 +16,8 @@ export const generateWorkoutPlanPrompt = (userData) => {
     }
   }
   
-  // For movement restrictions - ensure userData.movementRestrictions exists and is an array
+  
   if (!userData.movementRestrictions) {
-    // Create movementRestrictions from movement_restrictions
     if (userData.movement_restrictions) {
       userData.movementRestrictions = Array.isArray(userData.movement_restrictions) 
         ? userData.movement_restrictions 
@@ -34,7 +27,6 @@ export const generateWorkoutPlanPrompt = (userData) => {
     }
   }
   
-  // Now extract text from our properly formatted arrays
   const healthConditionsText = userData.healthConditions.length > 0 
     ? userData.healthConditions.join(', ') 
     : "";
@@ -240,15 +232,11 @@ Remember: Return ONLY valid JSON with no explanations, backticks, or markdown.
 `;
 };
 
-// Optional: Define a simplified way to turn the workout into a readable format
 export const formatWorkoutPlan = (workoutPlanData) => {
   try {
     
-    
-    // Try to parse the data if it's a string
     let plan;
     if (typeof workoutPlanData === 'string') {
-      // Check if we need to find the JSON within markdown code blocks
       if (workoutPlanData.includes('```json')) {
         const jsonMatch = workoutPlanData.match(/```json\s*([\s\S]*?)\s*```/);
         if (jsonMatch && jsonMatch[1]) {
@@ -265,8 +253,6 @@ export const formatWorkoutPlan = (workoutPlanData) => {
       plan = workoutPlanData;
     }
     
-    
-    
     // Check if the plan has the expected structure
     if (!plan || !plan.workout_plan || !Array.isArray(plan.workout_plan.days)) {
       console.error("Unexpected plan structure:", plan);
@@ -275,7 +261,6 @@ export const formatWorkoutPlan = (workoutPlanData) => {
       if (Array.isArray(plan.days)) {
         plan = { workout_plan: plan };
       } else if (plan.workout_plan && !Array.isArray(plan.workout_plan.days) && plan.workout_plan.days) {
-        // Sometimes the API returns days as an object instead of array
         const daysArray = Object.values(plan.workout_plan.days);
         plan.workout_plan.days = daysArray;
       } else {

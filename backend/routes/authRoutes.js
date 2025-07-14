@@ -8,7 +8,7 @@ const router = express.Router();
 router.post("/signup", async (req, res) => {
     try {
         const { uid, email, name, photoURL } = req.body;
-        const provider = req.body.provider || "google.com"; // Default to Google if not specified
+        const provider = req.body.provider || "google.com";
 
         if (!uid) {
             return res.status(400).json({ message: "Missing user ID" });
@@ -17,14 +17,12 @@ router.post("/signup", async (req, res) => {
         const userRef = db.collection("users").doc(uid);
         const userDoc = await userRef.get();
 
-        // Get provider information from Firebase Auth
         const authInfo = await getUserAuthProviderInfo(uid);
 
-        // Define data to store/update
         const userData = {
             uid,
             email,
-            name: name || email.split('@')[0], // Use email prefix if name not provided
+            name: name || email.split('@')[0],
             photoURL: photoURL || null,
             authProvider: authInfo.providerId,
             providers: authInfo.providers,
@@ -33,7 +31,6 @@ router.post("/signup", async (req, res) => {
         };
 
         if (!userDoc.exists) {
-            // New user - create record
             userData.createdAt = new Date();
             await userRef.set(userData);
             

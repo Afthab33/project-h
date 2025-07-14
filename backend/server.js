@@ -7,12 +7,10 @@ import workoutRoutes from "./routes/workoutRoutes.js";
 import dietRoutes from "./routes/dietRoutes.js";
 import coachRoutes from './routes/coachRoutes.js';
 
-// Initialize dotenv
 dotenv.config();
 
 const app = express();
 
-// Add validation for required environment variables
 const requiredEnvVars = [
   'FIREBASE_PROJECT_ID',
   'FIREBASE_PRIVATE_KEY',
@@ -26,20 +24,15 @@ if (missingVars.length > 0) {
   process.exit(1);
 }
 
-// Fix the CORS configuration
-
-// CORS configuration that supports both development and production
 const isDevelopment = process.env.NODE_ENV !== 'production';
 
 let corsOptions;
 if (isDevelopment) {
-  // In development, be more permissive with CORS
   corsOptions = {
-    origin: true, // Allow all origins in development
+    origin: true,
     credentials: true
   };
 } else {
-  // In production, use the strict CORS settings
   const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') || ['https://www.projhealth.com', 'https://projhealth.com'];
   
   corsOptions = {
@@ -67,7 +60,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Use Routes
-app.use("/auth", authRoutes);  //signup,user
+app.use("/auth", authRoutes);
 app.use("/onboarding", questionnaireRoutes);
 app.use("/workout", workoutRoutes);
 app.use("/diet", dietRoutes);

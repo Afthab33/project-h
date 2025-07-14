@@ -2,7 +2,6 @@ import { firebaseAdmin, verifyToken } from '../config/firebase.js';
 
 const authenticateUser = async (req, res, next) => {
     try {
-        // Get the auth header
         const authHeader = req.headers.authorization;
 
         if (!authHeader || !authHeader.startsWith('Bearer ')) {

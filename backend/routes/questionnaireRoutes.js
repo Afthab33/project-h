@@ -7,10 +7,8 @@ const router = express.Router();
 // Store User Questionnaire **AFTER** Login
 router.post("/", authenticateUser, async (req, res) => {
     try {
-        const { uid } = req.user; // Get user ID from Firebase Auth
+        const { uid } = req.user;
         const data = req.body;
-        
-        
 
         // Important change: Don't reject if document exists, update it instead
         const docRef = db.collection("user_questionnaire").doc(uid);
@@ -65,7 +63,7 @@ router.post("/", authenticateUser, async (req, res) => {
 // Get User Questionnaire
 router.get("/", authenticateUser, async (req, res) => {
     try {
-        const { uid } = req.user; // Get user ID from Firebase Auth
+        const { uid } = req.user;
 
         // Get questionnaire document from Firestore
         const docRef = db.collection("user_questionnaire").doc(uid);
@@ -97,8 +95,6 @@ router.get("/:id", authenticateUser, async (req, res) => {
 
         // Optional: Check permissions (e.g., admin users or if the requested ID matches the authenticated user)
         if (id !== uid) {
-            // You could check admin privileges here if needed
-            // For now, we'll just restrict access to the user's own data
             return res.status(403).json({ message: "Not authorized to access this questionnaire" });
         }
 

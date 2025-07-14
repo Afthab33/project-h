@@ -21,7 +21,6 @@ router.post("/questionnaire", authenticateUser, async (req, res) => {
     }
 });
 
-// Generate Workout Plan from Questionnaire - KEEP ONLY THIS VERSION WITH BETTER LOGGING
 router.post("/gen", authenticateUser, async (req, res) => {
     try {
       const { uid } = req.user;
@@ -45,7 +44,6 @@ router.post("/gen", authenticateUser, async (req, res) => {
         ? userData.movement_restrictions
         : (userData.movement_restrictions ? [userData.movement_restrictions] : []);
 
-      // ADDITIONAL FIX: Also create camelCase versions since both naming conventions appear in code
       userData.healthConditions = userData.health_conditions;
       userData.movementRestrictions = userData.movement_restrictions;
 
@@ -56,7 +54,7 @@ router.post("/gen", authenticateUser, async (req, res) => {
         const prompt = generateWorkoutPlanPrompt(userData);
         
         
-        const rawPlan = await generatePlanDirect(prompt); // Use generatePlanDirect
+        const rawPlan = await generatePlanDirect(prompt);
         
         
         const formattedPlan = formatWorkoutPlan(rawPlan);
@@ -65,7 +63,7 @@ router.post("/gen", authenticateUser, async (req, res) => {
         // Store the generated plan
         await db.collection("workout_plans").doc(uid).set({
           workout_plan: formattedPlan,
-          created_at: FieldValue.serverTimestamp(), // Use FieldValue directly
+          created_at: FieldValue.serverTimestamp(),
           user_preferences: userData
         });
         
@@ -104,7 +102,6 @@ router.get("/questionnaire", authenticateUser, async (req, res) => {
         data: doc.data()
       });
     } else {
-      // No questionnaire found for this user
       return res.status(404).json({
         message: "Workout questionnaire not found for this user"
       });

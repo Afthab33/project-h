@@ -1,10 +1,8 @@
 import admin from 'firebase-admin';
 import dotenv from 'dotenv';
 
-// Load environment variables from .env file
 dotenv.config();
 
-// Firebase service account credentials from .env
 const serviceAccount = {
     type: "service_account",
     project_id: process.env.FIREBASE_PROJECT_ID,

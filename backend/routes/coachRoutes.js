@@ -12,12 +12,8 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY
 });
 
-// Check OpenAI API key
-
-
 // Basic coach prompt function
 const generateCoachPrompt = (userData, messages, message) => {
-  // Extract key user data with safe defaults
   const name = userData?.displayName || 'User';
   const primaryGoal = userData?.primaryGoal || 'general health';
   const age = userData?.age || 'unknown';
@@ -127,10 +123,9 @@ router.post('/chat', authenticateUser, async (req, res) => {
     };
     
     const prompt = generateCoachPrompt(combinedUserData, recentMessages, message);
-    
-    // Call OpenAI API with system message explicitly including profile context
+
     const response = await openai.chat.completions.create({
-      model: "gpt-4o-mini", // Using the full model for better personalization
+      model: "gpt-4o-mini",
       messages: [
         {
           role: "system",
@@ -141,8 +136,8 @@ router.post('/chat', authenticateUser, async (req, res) => {
           content: prompt
         }
       ],
-      temperature: 0.7, // Slightly higher for more personalization while maintaining focus
-      max_tokens: 250, // Allow enough tokens for personalized content
+      temperature: 0.7,
+      max_tokens: 250,
       presence_penalty: 0.3,
       frequency_penalty: 0.3
     });
@@ -159,24 +154,20 @@ router.post('/chat', authenticateUser, async (req, res) => {
       id: userMessageId,
       role: 'user',
       content: message,
-      timestamp: new Date().toISOString() // Use ISO string instead of server timestamp for now
+      timestamp: new Date().toISOString()
     };
     
     const aiMessage = {
       id: coachMessageId,
       role: 'assistant',
       content: coachResponse,
-      timestamp: new Date().toISOString() // Use ISO string instead of server timestamp for now
+      timestamp: new Date().toISOString()
     };
     
-    
-    
-    // First check if the document exists
     const chatDocRef = db.collection('coach_chats').doc(uid);
-    const chatDoc = await chatDocRef.get(); // This creates the second declaration of chatDoc
+    const chatDoc = await chatDocRef.get();
     
     if (!chatDoc.exists) {
-      // Create the document with initial messages
       await chatDocRef.set({
         messages: [userMessage, aiMessage],
         updated_at: new Date().toISOString()
@@ -188,8 +179,6 @@ router.post('/chat', authenticateUser, async (req, res) => {
         updated_at: new Date().toISOString()
       });
     }
-    
-    
     
     // Return success with AI response
     return res.status(200).json({
@@ -213,15 +202,12 @@ router.post('/summary', authenticateUser, async (req, res) => {
     const uid = req.user.uid;
     const { context } = req.body;
     
-    // If this is for sleep context, return early since we have a dedicated endpoint
     if (context === 'sleep') {
       return res.status(200).json({
         success: true,
         summary: null
       });
     }
-    
-    // Rest of the existing code remains the same
 
     // Fetch user's onboarding data for context
     const onboardingDoc = await db.collection('onboarding_data').doc(uid).get();
@@ -287,7 +273,7 @@ router.post('/summary', authenticateUser, async (req, res) => {
     
     // Call OpenAI
     const response = await openai.chat.completions.create({
-      model: "gpt-4o-mini", // Or your preferred model
+      model: "gpt-4o-mini",
       messages: [
         {
           role: "system",
@@ -318,9 +304,6 @@ router.post('/summary', authenticateUser, async (req, res) => {
     });
   }
 });
-
-// Add this new route after your existing routes
-// This is specifically designed for sleep data analysis
 
 router.post('/analyze-sleep', authenticateUser, async (req, res) => {
   try {

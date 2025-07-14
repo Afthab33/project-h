@@ -80,7 +80,7 @@ CRITICAL RESPONSE INSTRUCTIONS:
 7. Start with a greeting using their name
 ${hasSleepData ? '8. ALWAYS acknowledge and reference the user\'s sleep data when relevant to their question' : ''}
 
-👤 User Profile:
+User Profile:
 Name: ${name}
 Age: ${age}
 Gender: ${gender}
@@ -107,7 +107,7 @@ Injuries: ${injuries || 'None reported'}
 
 ${hasSleepData ? 'REMEMBER: The user has uploaded their actual sleep data, so use this information to provide personalized advice instead of general sleep recommendations.' : ''}
 
-💬 Current User Message: "${message}"
+Current User Message: "${message}"
 
 Respond as Oats, making your response feel personalized while avoiding any special formatting characters:`;
 };
