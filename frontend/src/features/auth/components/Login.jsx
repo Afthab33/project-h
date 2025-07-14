@@ -10,7 +10,6 @@ const Login = ({ onLoginSuccess, formData, onBackToLanding, onSwitchToLogin }) =
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   
-  // Unified handler for third-party auth methods
   const handleThirdPartySignIn = async (signInMethod, providerName) => {
     try {
       setLoading(true);
@@ -113,7 +112,7 @@ const Login = ({ onLoginSuccess, formData, onBackToLanding, onSwitchToLogin }) =
               setLoading={setLoading}
               setError={setError}
               formData={formData}
-              compact={true} // Add a compact prop to make the form smaller
+              compact={true}
             />
           </CardContent>
           

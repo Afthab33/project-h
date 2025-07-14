@@ -14,10 +14,7 @@ import {
 } from 'lucide-react';
 
 const HealthConditionsStep = ({ formData, handleInputChange, errors, setErrors }) => {
-  // For initialization without race conditions
   const [initialized, setInitialized] = useState(false);
-
-  // Health conditions with Lucide icons
   const healthConditions = [
     { 
       id: 'No conditions', 
@@ -75,7 +72,6 @@ const HealthConditionsStep = ({ formData, handleInputChange, errors, setErrors }
     }
   ];
 
-  // Initialize health conditions with "No conditions" as default
   useEffect(() => {
     if (!initialized) {
       const healthCondArr = formData.healthConditions || [];
@@ -100,10 +96,8 @@ const HealthConditionsStep = ({ formData, handleInputChange, errors, setErrors }
     let newConditions;
     
     if (conditionId === 'No conditions') {
-      // If selecting "No conditions", clear all other conditions
       newConditions = currentConditions.includes('No conditions') ? [] : ['No conditions'];
     } else {
-      // Remove "No conditions" if it exists
       newConditions = currentConditions.filter(id => id !== 'No conditions');
       
       // Toggle the selected condition
@@ -113,7 +107,6 @@ const HealthConditionsStep = ({ formData, handleInputChange, errors, setErrors }
         newConditions.push(conditionId);
       }
       
-      // If no conditions are selected, don't auto-add "No conditions"
       if (newConditions.length === 0) {
         newConditions = [];
       }
@@ -156,7 +149,6 @@ const HealthConditionsStep = ({ formData, handleInputChange, errors, setErrors }
           {healthConditions.map((condition) => {
             const isSelected = Array.isArray(formData.healthConditions) && 
                               formData.healthConditions.includes(condition.id);
-            // Remove the isDisabled logic that was preventing selection of other conditions
             
             return (
               <button

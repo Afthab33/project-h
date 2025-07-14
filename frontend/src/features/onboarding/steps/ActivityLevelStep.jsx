@@ -6,12 +6,11 @@ import {
   PersonStanding, 
   Bike, 
   Dumbbell,
-  Activity, // Replacing Running with Activity
-  Lightbulb // Correct name for LightbulbIcon
+  Activity,
+  Lightbulb
 } from 'lucide-react';
 
 const ActivityLevelStep = ({ formData, handleInputChange, errors, setErrors }) => {
-  // Activity levels with Lucide icons
   const activityLevels = [
     {
       id: 'sedentary',
@@ -42,7 +41,7 @@ const ActivityLevelStep = ({ formData, handleInputChange, errors, setErrors }) =
       level: '4',
       title: 'Active',
       description: 'Intense exercise 6-7 days per week or physically active job',
-      icon: <Activity className="h-4 w-4 sm:h-5 sm:w-5" />, // Changed from Running to Activity
+      icon: <Activity className="h-4 w-4 sm:h-5 sm:w-5" />,
       color: '#2f669a'
     },
     {
@@ -55,7 +54,6 @@ const ActivityLevelStep = ({ formData, handleInputChange, errors, setErrors }) =
     }
   ];
   
-  // Validation logic remains unchanged
   useEffect(() => {
     if (setErrors) {
       if (!formData.activityLevel) {
@@ -70,7 +68,6 @@ const ActivityLevelStep = ({ formData, handleInputChange, errors, setErrors }) =
     }
   }, [formData.activityLevel, setErrors]);
 
-  // Function to render activity level dots instead of bars
   const renderLevelIndicator = (level, color) => {
     return (
       <div className="flex items-center gap-0.5 mt-0 ml-2 sm:ml-3">

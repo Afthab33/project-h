@@ -15,7 +15,6 @@ import {
 import { getAISummary } from '../../coach/services/coachService';
 import { useAuth } from '@/contexts/AuthContext';
 
-// Fixed CustomAnimations component - removed jsx and global attributes
 const CustomAnimations = () => (
   <>
     <style dangerouslySetInnerHTML={{ __html: `
@@ -109,9 +108,8 @@ const DynamicAISummary = ({ userData, healthMetrics, activeTab, onChatOpen }) =>
     }
   };
 
-  // Enhanced effect to fetch AI summary from backend
+  // Effect to fetch AI summary from backend
   useEffect(() => {
-    // Don't render for sleep tab
     if (activeTab === 'sleep') {
       setIsLoading(false);
       return;
@@ -122,7 +120,6 @@ const DynamicAISummary = ({ userData, healthMetrics, activeTab, onChatOpen }) =>
       setError(null);
       
       try {
-        // Fix for "User profile not loaded" error - add more robust checks
         if (!userData || Object.keys(userData).length === 0) {
           setSummary("Getting your personalized insights ready...");
           setIsLoading(false);

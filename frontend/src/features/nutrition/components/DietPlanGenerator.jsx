@@ -24,20 +24,13 @@ const DietPlanGenerator = ({ userData, healthMetrics, onDietPlanGenerated }) => 
     try {
       const token = await getToken();
       
-      // Generate the diet plan with minimal data - backend will use stored questionnaire
       const generationResponse = await generateDietPlan({}, token);
-      
-      
-      // Then retrieve the generated plan
       const dietPlanData = await getDietPlan(token);
-      
-      
-      // Check if we have valid data
+
       if (!dietPlanData || !dietPlanData.meal_plan) {
         throw new Error('The diet plan was not generated correctly. Please try again.');
       }
       
-      // Format the data using the utility function
       const formattedDietPlan = transformDietPlanData(dietPlanData);
       
       if (!formattedDietPlan || Object.keys(formattedDietPlan).length === 0) {
@@ -46,7 +39,7 @@ const DietPlanGenerator = ({ userData, healthMetrics, onDietPlanGenerated }) => 
       
       
       
-      // Pass the formatted diet plan back to the parent component
+      // Passing the formatted diet plan back to the parent component
       onDietPlanGenerated(formattedDietPlan);
     } catch (error) {
       console.error('Failed to generate diet plan:', error);
@@ -56,7 +49,6 @@ const DietPlanGenerator = ({ userData, healthMetrics, onDietPlanGenerated }) => 
     }
   };
 
-  // Auto-generate on first load
   useEffect(() => {
     if (!hasMadeAttempt) {
       generateNewDietPlan();
@@ -132,8 +124,6 @@ const DietPlanGenerator = ({ userData, healthMetrics, onDietPlanGenerated }) => 
     );
   }
 
-  // This state should not be visible since we auto-generate
-  // but adding as a fallback
   return (
     <Card className="max-w-2xl mx-auto">
       <div className="h-2 bg-[#3E7B27] w-full"></div>

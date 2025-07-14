@@ -30,7 +30,7 @@ const NutritionCard = ({ userData = {}, healthMetrics = {} }) => {
   const [showQuestionnaire, setShowQuestionnaire] = useState(false);
   const [submissionError, setSubmissionError] = useState(null);
   
-  // Destructure with default values to prevent errors
+  // Destructuring with default values to prevent errors
   const { 
     calorieTarget = 2000,
     macros = { protein: 30, carbs: 40, fat: 30 },

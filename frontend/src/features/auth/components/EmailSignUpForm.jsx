@@ -104,11 +104,9 @@ const EmailSignUpForm = ({ onSignUpSuccess, loading, setLoading, setError, formD
           await submitOnboardingData(formattedData, token);
         } catch (onboardingError) {
           console.error("❌ Error submitting onboarding data:", onboardingError);
-          // Continue anyway
         }
       }
       
-      // Pass the authenticated user to the parent component
       onSignUpSuccess();
     } catch (error) {
       if (error.code === 'auth/email-already-in-use') {
@@ -127,7 +125,6 @@ const EmailSignUpForm = ({ onSignUpSuccess, loading, setLoading, setError, formD
   return (
     <form onSubmit={handleSubmit} className="space-y-3">
       <div className="space-y-3">
-        {/* Names in a cleaner 2-column grid with better spacing */}
         <div className="grid grid-cols-2 gap-2.5">
           <div>
             <label htmlFor="firstName" className="block text-xs font-medium text-gray-700 mb-1.5">

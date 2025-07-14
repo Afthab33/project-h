@@ -10,7 +10,7 @@ import {
   updateProfile
 } from 'firebase/auth';
 import { auth, googleProvider, facebookProvider, firebaseApp } from '../config/firebase';
-import api from '@/services/api'; // Import the API service
+import api from '@/services/api';
 const AuthContext = createContext();
 
 export function useAuth() {
@@ -23,7 +23,6 @@ export function AuthProvider({ children }) {
   const [onboardingData, setOnboardingData] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Helper function to get token (still needed for some direct interactions)
   async function getToken(forceRefresh = false) {
     if (!currentUser) {
       return null;
@@ -278,7 +277,6 @@ export function AuthProvider({ children }) {
     return unsubscribe;
   }, []);
 
-  // Check auth and data status - simplified
   async function checkAuthAndDataStatus() {
     try {
       if (!currentUser) {
@@ -315,7 +313,6 @@ export function AuthProvider({ children }) {
     }
   }
 
-  // Context value - keeping getToken for backward compatibility
   const value = {
     currentUser,
     userProfile,
@@ -325,7 +322,7 @@ export function AuthProvider({ children }) {
     signInWithEmail,
     signInWithFacebook,
     logout,
-    getToken,  // Keep for backward compatibility
+    getToken,
     fetchUserData,
     fetchOnboardingData,
     submitOnboardingData,

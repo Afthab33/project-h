@@ -86,21 +86,17 @@ const DietQuestionnaire = ({ userData, healthMetrics, onSubmit }) => {
     
     setIsSubmitting(true);
     try {
-      // Add validation
       if (!formData.dietType) {
-        // Show error - could use toast or form validation
         console.error("Please select a diet type");
         return;
       }
       
-      // Process any "other" fields
       const processedData = { ...formData };
       
       if (formData.dietType === 'other' && formData.otherDiet) {
         processedData.dietType = formData.otherDiet;
       }
       
-      // Add "other" allergies if specified
       if (formData.otherAllergies) {
         const otherAllergiesArray = formData.otherAllergies
           .split(',')
@@ -112,8 +108,7 @@ const DietQuestionnaire = ({ userData, healthMetrics, onSubmit }) => {
           ...otherAllergiesArray
         ];
       }
-      
-      // Add "other" restrictions if specified
+
       if (formData.otherRestrictions) {
         const otherRestrictionsArray = formData.otherRestrictions
           .split(',')

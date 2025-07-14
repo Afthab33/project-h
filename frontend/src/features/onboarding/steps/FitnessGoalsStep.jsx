@@ -12,7 +12,6 @@ import {
 } from 'lucide-react';
 
 const FitnessGoalsStep = ({ formData, handleInputChange, errors, setErrors }) => {
-  // Goal options with Lucide icons instead of emojis
   const fitnessGoals = [
     {
       id: 'lose_weight',
@@ -51,12 +50,10 @@ const FitnessGoalsStep = ({ formData, handleInputChange, errors, setErrors }) =>
     }
   ];
 
-  // Helper function to get selected goal metadata
   const getSelectedGoal = () => {
     return fitnessGoals.find(goal => goal.id === formData.primaryGoal) || fitnessGoals[0];
   };
   
-  // Validate target weight when component mounts or values change
   useEffect(() => {
     if (!formData.targetWeight || !formData.weight) return;
     

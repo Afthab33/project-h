@@ -15,19 +15,14 @@ const LoginPage = ({ onLoginSuccess, onRedirectToSignup, onBackToLanding }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  // CRITICAL FIX: Simplified authentication handler
   const handleAuthentication = async (authMethod, authParams = []) => {
     try {
       setLoading(true);
       setError('');
 
-      // Call the auth method with appropriate params
       const result = await authMethod(...authParams);
       
-      // If we have a user or success response, call onLoginSuccess
-      // Don't try to fetch onboarding data here - that's the key issue
       if (result && (result.user || result.success)) {
-        // Simply call onLoginSuccess to trigger proper navigation
         onLoginSuccess();
         return;
       }
@@ -160,7 +155,7 @@ const LoginPage = ({ onLoginSuccess, onRedirectToSignup, onBackToLanding }) => {
               </div>
             </div>
             
-            {/* Social Login Buttons - with enhanced responsive styling */}
+            {/* Social Login Buttons*/}
             <div className="space-y-3 sm:space-y-4">
               {/* Google Button */}
               <button

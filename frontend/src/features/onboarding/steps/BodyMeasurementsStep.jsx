@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { AlertCircle, Ruler, Scale, Target } from 'lucide-react';
 
-// Define these helper functions locally to ensure they work properly
 const cmToInches = (cm) => {
   return cm ? parseFloat(cm) / 2.54 : 0;
 };
@@ -11,13 +10,10 @@ const kgToLbs = (kg) => {
 };
 
 const BodyMeasurementsStep = ({ formData, handleInputChange, errors, setErrors }) => {
-  // Local state for feet and inches when using imperial
   const [feet, setFeet] = useState(0);
   const [inches, setInches] = useState(0);
 
-  // Convert between height units
   useEffect(() => {
-    // When switching to feet/inches from cm, convert and set local state
     if (formData.heightUnit === 'ft' && formData.previousHeightUnit === 'cm' && formData.height) {
       const totalInches = Math.round(formData.height / 2.54);
       const ft = Math.floor(totalInches / 12);
@@ -25,7 +21,6 @@ const BodyMeasurementsStep = ({ formData, handleInputChange, errors, setErrors }
       setFeet(ft);
       setInches(inch);
       
-      // Update the main form data
       const newHeight = ft * 12 + inch;
       if (newHeight !== formData.height) {
         handleInputChange({
@@ -36,7 +31,6 @@ const BodyMeasurementsStep = ({ formData, handleInputChange, errors, setErrors }
         });
       }
     }
-    // When switching to feet/inches from inches, convert and set local state
     else if (formData.heightUnit === 'ft' && formData.previousHeightUnit === 'in' && formData.height) {
       const ft = Math.floor(formData.height / 12);
       const inch = formData.height % 12;
@@ -55,15 +49,12 @@ const BodyMeasurementsStep = ({ formData, handleInputChange, errors, setErrors }
     }
     // When switching to inches from feet/inches, keep the total inches value
     else if (formData.heightUnit === 'in' && formData.previousHeightUnit === 'ft' && formData.height) {
-      // Height is already in total inches, no conversion needed
     }
   }, [formData.heightUnit, formData.previousHeightUnit]);
 
-  // Handle unit change with tracking of previous unit
   const handleUnitChange = (e) => {
     const { name, value } = e.target;
     
-    // Track the previous height unit before changing
     if (name === 'heightUnit') {
       handleInputChange({
         target: {
@@ -76,18 +67,15 @@ const BodyMeasurementsStep = ({ formData, handleInputChange, errors, setErrors }
     handleInputChange(e);
   };
 
-  // Handle feet and inches changes
   const handleFeetInchesChange = (e) => {
     const { name, value } = e.target;
     
-    // Update local state
     if (name === 'feet') {
       setFeet(parseInt(value) || 0);
     } else if (name === 'inches') {
       setInches(parseInt(value) || 0);
     }
     
-    // Calculate total inches and update form data
     const totalInches = (name === 'feet' ? parseInt(value) || 0 : feet) * 12 + 
                         (name === 'inches' ? parseInt(value) || 0 : inches);
     
@@ -99,7 +87,6 @@ const BodyMeasurementsStep = ({ formData, handleInputChange, errors, setErrors }
     });
   };
 
-  // Validate measurements when component mounts or values change
   useEffect(() => {
     const newErrors = {};
     

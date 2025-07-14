@@ -23,7 +23,6 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 
-// Import components
 import HealthSummary from './components/HealthSummary';
 import DynamicAISummary from './components/DynamicAISummary';
 import AICoach from '../coach/AICoach';
@@ -46,10 +45,7 @@ const Dashboard = () => {
     logout 
   } = useAuth();
   
-  // Create a ref for the AICoach component
   const aiCoachRef = useRef(null);
-  
-  // Component state
   const [activeTab, setActiveTab] = useState('home');
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -378,12 +374,10 @@ const Dashboard = () => {
         </div>
       </div>
       
-      {/* Create a spacer div that pushes content down by exactly the height of the navbar */}
       <div className="h-16"></div>
-      
-      {/* Main content container with significantly increased top padding */}
+      {/* Main content container*/}
       <main className="max-w-7xl mx-auto px-4 md:px-6 pt-10 md:pt-10 pb-16 md:pb-20 relative z-10">
-        {/* Secondary dashboard title with greeting - now with extra margin on mobile */}
+        {/* Secondary dashboard title with greeting */}
         <div className="mt-10 md:mt-14 mb-6 md:mb-12 flex flex-col md:flex-row md:justify-between md:items-end gap-4">
           <div>
             <span className="text-sm text-gray-500 font-medium mb-1 block">
@@ -395,7 +389,7 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* AI Summary - Direct component, no extra card wrapper */}
+        {/* AI Summary - Direct component*/}
         <DynamicAISummary 
           userData={userData || {}}
           healthMetrics={healthMetrics}
@@ -403,15 +397,14 @@ const Dashboard = () => {
           onChatOpen={() => setAiChatOpen(true)}
           isRenamed={true}
         />
-        
-        {/* Improved Tabs navigation */}
+
         <Tabs 
           defaultValue="home" 
           className="w-full" 
           onValueChange={setActiveTab}
           value={activeTab}
         >
-          {/* Improved Tab Navigation - hidden on mobile as we use the top menu */}
+          {/* Tab Navigation  */}
           <div className="mb-6 md:mb-8 hidden md:block">
             <TabsList className="inline-flex p-1 rounded-xl bg-gray-100/80 shadow-sm">
               <TabsTrigger 
@@ -505,7 +498,7 @@ const Dashboard = () => {
                   />
                 </div>
 
-                {/* Improved AI Coach Card with better height handling */}
+                {/* AI Coach Card*/}
                 <div className="overflow-hidden rounded-2xl shadow-md border-0 bg-white">
                   <div className="bg-gradient-to-r from-[#4D55CC] to-[#3E7B27] p-4 flex items-center">
                     <div className="bg-white/20 p-2 rounded-lg mr-3">

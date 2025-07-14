@@ -29,24 +29,19 @@ const AICoach = forwardRef(({ userData, healthMetrics, contextHint, hideHeader =
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [copiedId, setCopiedId] = useState(null);
-  // Add state for context data
   const [contextData, setContextData] = useState({});
-  // Add state for enhanced context that will be sent to the AI
   const [enhancedContext, setEnhancedContext] = useState({});
   
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
   const { getToken } = useAuth();
   
-  // Updated common suggested prompts that are more direct and engaging
   const commonPrompts = [
     "How healthy am I?",
     "How can I lose weight?", 
     "What workout today?", 
     "How did I sleep?"
   ];
-  
-  // Enhanced context-specific prompts that better align with user tabs
   const contextPrompts = {
     home: [
       "How healthy am I?",
@@ -72,7 +67,6 @@ const AICoach = forwardRef(({ userData, healthMetrics, contextHint, hideHeader =
   
   // Dynamically select prompts based on context
   const getSuggestedPrompts = () => {
-    // If we're in a specific context, mix 2 context-specific with 2 common prompts
     if (contextHint && contextPrompts[contextHint]) {
       // Get 2 random prompts from the context-specific list
       const contextSpecificPrompts = [...contextPrompts[contextHint]].sort(() => 0.5 - Math.random()).slice(0, 2);
@@ -88,7 +82,6 @@ const AICoach = forwardRef(({ userData, healthMetrics, contextHint, hideHeader =
     return commonPrompts;
   };
   
-  // Get suggested prompts based on context
   const suggestedPrompts = getSuggestedPrompts();
   
   useEffect(() => {
@@ -99,14 +92,12 @@ const AICoach = forwardRef(({ userData, healthMetrics, contextHint, hideHeader =
     scrollToBottom();
   }, [messages]);
   
-  // Focus input when component loads
   useEffect(() => {
     if (inputRef.current && !hideHeader) {
       setTimeout(() => inputRef.current.focus(), 300);
     }
   }, [hideHeader]);
 
-  // Add method to update context data (for use by parent components)
   const updateContext = (newContextData) => {
     setContextData(prevContext => ({
       ...prevContext,
@@ -198,7 +189,6 @@ const AICoach = forwardRef(({ userData, healthMetrics, contextHint, hideHeader =
             (userData?.bmi ? calculations.getBMICategory(userData?.bmi).category : 
             calculations.getBMICategory(calculations.calculateBMI(userData?.height, userData?.weight, 'cm', 'kg')).category)
         },
-        // Include enhanced context with sleep data
         ...enhancedContext
       };
       
@@ -283,13 +273,11 @@ const AICoach = forwardRef(({ userData, healthMetrics, contextHint, hideHeader =
         if (recentSleepMetrics) {
           const sleepSummary = `Recent sleep data analysis: Average ${recentSleepMetrics.avgSleepDuration.toFixed(1)} hours per night over the last ${Math.min(contextData.sleepData.length, 7)} days. Sleep quality metrics: Deep sleep ${recentSleepMetrics.avgDeepSleep.toFixed(1)} hours (${recentSleepMetrics.deepSleepPercentage.toFixed(0)}% of total sleep), sleep consistency score: ${recentSleepMetrics.consistency}/10. Your recent sleep patterns suggest ${recentSleepMetrics.consistency > 7 ? 'good consistency' : 'room for improvement in sleep schedule consistency'}.`;
           
-          // Update enhanced context with more detailed sleep insights
           setEnhancedContext(prev => ({
             ...prev,
             sleepInsights: sleepSummary
           }));
           
-          // Add a message from the coach acknowledging the new sleep data
           setMessages(prev => [...prev, {
             id: 'sleep-data-' + Date.now(),
             role: 'assistant',
@@ -303,7 +291,6 @@ const AICoach = forwardRef(({ userData, healthMetrics, contextHint, hideHeader =
     }
   };
   
-  // Expose updateContext method for parent components
   useImperativeHandle(ref, () => ({
     updateContext: (newContextData) => {
       setContextData(prevContext => ({
@@ -316,7 +303,6 @@ const AICoach = forwardRef(({ userData, healthMetrics, contextHint, hideHeader =
   
   return (
     <Card className="flex flex-col shadow-lg border-gray-200">
-      {/* Rest of your component remains the same */}
       {!hideHeader && (
         <div className="bg-gradient-to-r from-[#4D55CC]/90 to-[#4D55CC] text-white p-4 flex items-center justify-between rounded-t-lg">
           <div className="flex items-center">
@@ -519,7 +505,6 @@ const AICoach = forwardRef(({ userData, healthMetrics, contextHint, hideHeader =
           </Button>
         </form>
         
-        {/* Add a subtle branding footer */}
         <div className="w-full flex justify-center mt-1">
           <p className="text-[10px] text-gray-400">Powered by Project Health AI</p>
         </div>

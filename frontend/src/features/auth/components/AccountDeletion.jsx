@@ -22,7 +22,6 @@ const AccountDeletion = () => {
       setLoading(true);
       setError('');
       
-      // No need to get token manually - API service handles authentication
       const response = await api.post('/user/delete-account', {});
       
       setSuccess(true);

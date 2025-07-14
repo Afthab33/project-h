@@ -10,7 +10,6 @@ import {
 } from 'lucide-react';
 
 const ExerciseAvailabilityStep = ({ formData, handleInputChange, errors, setErrors }) => {
-  // Enhanced availability options with Lucide React icons
   const availabilityOptions = [
     {
       id: '1-2 days/week',
@@ -67,7 +66,6 @@ const ExerciseAvailabilityStep = ({ formData, handleInputChange, errors, setErro
 
   return (
     <div className="space-y-4 sm:space-y-5">
-      {/* More descriptive but compact heading */}
       <div>
         <label className="block text-sm sm:text-base font-medium text-gray-700 mb-1.5 sm:mb-2">Exercise Frequency</label>
         <p className="text-gray-600 text-xs sm:text-sm mb-3 sm:mb-4">How many days per week can you commit to exercising?</p>

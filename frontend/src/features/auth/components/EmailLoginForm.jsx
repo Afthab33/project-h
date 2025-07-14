@@ -21,7 +21,6 @@ const EmailLoginForm = ({ onLoginSuccess, loading, setLoading, setError }) => {
       
       const result = await signInWithEmail(email, password);
       if (result.user) {
-        // Pass the authenticated user to the parent component
         onLoginSuccess(result.user);
       }
     } catch (error) {
